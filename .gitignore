@@ -1,0 +1,9 @@
+# Visual Studio cache/options
+.vs/
+
+#Visual Studio backup files
+Backup*/
+UpgradeLog*.htm
+
+#Build result files
+[Oo]bj/
