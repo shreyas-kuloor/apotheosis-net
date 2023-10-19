@@ -1,9 +1,15 @@
 # Visual Studio cache/options
 .vs/
 
+#JetBrains Rider cache/options
+.idea/
+
 #Visual Studio backup files
 Backup*/
 UpgradeLog*.htm
 
 #Build result files
 [Oo]bj/
+
+#App settings file
+appsettings.json

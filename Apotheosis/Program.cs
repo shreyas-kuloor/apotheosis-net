@@ -1,8 +1,10 @@
-﻿using Apotheosis.Configuration;
-using Discord;
-using Discord.WebSocket;
+﻿using Apotheosis.Components.Client.DependencyInjection;
+using Apotheosis.Components.Client.Interfaces;
+using Apotheosis.Components.Logging.DependencyInjection;
+using Apotheosis.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Apotheosis
 {
@@ -18,38 +20,24 @@ namespace Apotheosis
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection, _configuration);
-            _serviceProvider = serviceCollection.BuildServiceProvider();
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            _serviceProvider = services.BuildServiceProvider();
         }
 
-        private Task Log(LogMessage msg)
+        public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
+
+        public async Task MainAsync()
         {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
+            var clientService = _serviceProvider.GetRequiredService<IClientService>();
+            await clientService.RunAsync();
         }
 
-        public static void Main(string[] args) => new Program().RunAsync().GetAwaiter().GetResult();
-
-        public async Task RunAsync()
+        private void ConfigureServices(IServiceCollection services)
         {
-            var client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
-            var discordOptions = _serviceProvider.GetRequiredService<DiscordOptions>();
-
-            client.Log += Log;
-
-            await client.LoginAsync(TokenType.Bot, discordOptions.BotToken);
-            await client.StartAsync();
-
-            await Task.Delay(Timeout.Infinite);
-        }
-
-
-
-        private static void ConfigureServices(ServiceCollection serviceCollection, IConfiguration configuration)
-        {
-            serviceCollection.Configure<DiscordOptions>(configuration.GetSection(nameof(DiscordOptions)));
-            serviceCollection.AddSingleton<DiscordSocketClient>();
+            services.AddLogging(builder => builder.AddConsole());
+            services.AddLoggingServices();
+            services.AddClientServices(_configuration.GetSection(nameof(AppSettings.Client)));
         }
     }
 }
