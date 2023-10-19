@@ -1,6 +1,6 @@
-﻿namespace Apotheosis.Configuration
+﻿namespace Apotheosis.Components.Client.Configuration
 {
-    public sealed class DiscordOptions
+    public sealed class ClientSettings
     {
         /// <summary>
         /// The discord bot token.
