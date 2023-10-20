@@ -28,7 +28,7 @@ public class InteractionHandler : IInteractionHandler
     
     public async Task InitializeAsync()
     {
-        _discordSocketClient.Ready += ReadyAsync;
+        _discordSocketClient.Ready += () => _interactionService.RegisterCommandsGloballyAsync();
         _interactionService.Log += _logService.Log;
 
         await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
@@ -36,9 +36,10 @@ public class InteractionHandler : IInteractionHandler
         _discordSocketClient.InteractionCreated += HandleInteractionAsync;
     }
 
-    private async Task ReadyAsync()
+    public Task StopAsync()
     {
-        await _interactionService.RegisterCommandsGloballyAsync();
+        _interactionService.Dispose();
+        return Task.CompletedTask;
     }
 
     private async Task HandleInteractionAsync(SocketInteraction interaction)
@@ -50,26 +51,12 @@ public class InteractionHandler : IInteractionHandler
             var result = await _interactionService.ExecuteCommandAsync(context, _services);
 
             if (!result.IsSuccess)
-                switch (result.Error)
-                {
-                    case InteractionCommandError.UnmetPrecondition:
-                        break;
-                    case null:
-                    case InteractionCommandError.UnknownCommand:
-                    case InteractionCommandError.ConvertFailed:
-                    case InteractionCommandError.BadArgs:
-                    case InteractionCommandError.Exception:
-                    case InteractionCommandError.Unsuccessful:
-                    case InteractionCommandError.ParseFailed:
-                    default:
-                        break;
-                }
+                await context.Channel.SendMessageAsync(result.ToString());
         }
         catch
         {
             if (interaction.Type is InteractionType.ApplicationCommand)
-                await interaction.GetOriginalResponseAsync().ContinueWith(
-                    async (msg) => await msg.Result.DeleteAsync());
+                await interaction.GetOriginalResponseAsync().ContinueWith(msg => msg.Result.DeleteAsync());
         }
     }
 }

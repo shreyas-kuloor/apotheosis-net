@@ -29,4 +29,9 @@ public class LogService : ILogService
         _logger.Log(logLevel, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
         return Task.CompletedTask;
     }
+
+    public void LogError(Exception? exception, string? message, string? source)
+    {
+        _logger.LogError(exception, "[{Source}] {Message}", source, message);
+    }
 }
