@@ -13,3 +13,5 @@ UpgradeLog*.htm
 
 #App settings file
 appsettings.json
+
+bin/
