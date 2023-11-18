@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using Apotheosis.Components.Client.Interfaces;
-using Apotheosis.Components.Logging.Interfaces;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 
 namespace Apotheosis.Components.Client.Services;
 
@@ -11,25 +11,25 @@ public class InteractionHandler : IInteractionHandler
 {
     private readonly DiscordSocketClient _discordSocketClient;
     private readonly InteractionService _interactionService;
-    private readonly ILogService _logService;
+    private readonly ILogger<InteractionHandler> _logger;
     private readonly IServiceProvider _services;
     
     public InteractionHandler(
         DiscordSocketClient discordSocketClient,
         InteractionService interactionService,
-        ILogService logService,
+        ILogger<InteractionHandler> logger,
         IServiceProvider serviceProvider)
     {
         _discordSocketClient = discordSocketClient;
         _interactionService = interactionService;
-        _logService = logService;
+        _logger = logger;
         _services = serviceProvider;
     }
     
     public async Task InitializeAsync()
     {
         _discordSocketClient.Ready += ReadyAsync;
-        _interactionService.Log += _logService.Log;
+        _interactionService.Log += Log;
 
         await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
@@ -71,5 +71,21 @@ public class InteractionHandler : IInteractionHandler
                 await interaction.GetOriginalResponseAsync().ContinueWith(
                     async (msg) => await msg.Result.DeleteAsync());
         }
+    }
+    
+    private Task Log(LogMessage message)
+    {
+        var logLevel = message.Severity switch
+        {
+            LogSeverity.Critical => LogLevel.Critical,
+            LogSeverity.Error => LogLevel.Error,
+            LogSeverity.Warning => LogLevel.Warning,
+            LogSeverity.Info => LogLevel.Information,
+            LogSeverity.Verbose => LogLevel.Trace,
+            LogSeverity.Debug => LogLevel.Debug,
+            _ => LogLevel.Information
+        };
+        _logger.Log(logLevel, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
+        return Task.CompletedTask;
     }
 }

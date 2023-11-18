@@ -1,4 +1,6 @@
 using Apotheosis.Components.Client.Configuration;
+using Apotheosis.Components.Client.Interfaces;
+using Apotheosis.Components.Client.Services;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +17,12 @@ public static class ClientServicesExtensions
     /// <param name="clientSection">An instance of <see cref="IConfigurationSection"/>.</param>
     public static void AddClientServices(this IServiceCollection services, IConfigurationSection clientSection)
     {
+        services.AddSingleton<IClientService, ClientService>();
         services.Configure<ClientSettings>(clientSection);
         services.AddSingleton<DiscordSocketClient>();
         services.AddSingleton(
             x => new InteractionService(
                 x.GetRequiredService<DiscordSocketClient>()));
+        services.AddSingleton<IInteractionHandler, InteractionHandler>();
     }
 }
