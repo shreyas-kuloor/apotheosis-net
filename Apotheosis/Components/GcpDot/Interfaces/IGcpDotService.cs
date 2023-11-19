@@ -2,5 +2,5 @@
 
 public interface IGcpDotService
 {
-    Task<Image> GetGcpDotAsync();
+    Task<(Color centerDotColor, Color edgeDotColor)> GetGcpDotAsync();
 }

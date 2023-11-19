@@ -5,7 +5,7 @@ namespace Apotheosis.Components.GCPDot.Services;
 
 public static class GcpStatParser
 {
-    public static List<GcpStat> ParseGcpStats(string html)
+    public static IEnumerable<GcpStat> ParseGcpStats(string html)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(html);

@@ -5,7 +5,6 @@ using Apotheosis.Components.ImageUpload.Configuration;
 using Apotheosis.Components.ImageUpload.Exceptions;
 using Apotheosis.Components.ImageUpload.Interfaces;
 using Apotheosis.Components.ImageUpload.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 

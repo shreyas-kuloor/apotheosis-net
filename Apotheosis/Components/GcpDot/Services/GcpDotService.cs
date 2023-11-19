@@ -1,12 +1,15 @@
 ﻿using Apotheosis.Components.GCPDot.Interfaces;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Processing;
 using Color = SixLabors.ImageSharp.Color;
 
 namespace Apotheosis.Components.GCPDot.Services;
 
 public class GcpDotService : IGcpDotService
 {
+    /// <summary>
+    /// The path for the request to retrieve the gcp stat information.
+    /// </summary>
+    public const string GcpPath = "/gcpindex.php?current=1";
+    
     private readonly IGcpDotNetworkDriver _gcpDotNetworkDriver;
 
     public GcpDotService(IGcpDotNetworkDriver gcpDotNetworkDriver)
@@ -14,10 +17,10 @@ public class GcpDotService : IGcpDotService
         _gcpDotNetworkDriver = gcpDotNetworkDriver;
     }
     
-    public async Task<Image> GetGcpDotAsync()
+    public async Task<(Color centerDotColor, Color edgeDotColor)> GetGcpDotAsync()
     {
         var stringGcpResponse =
-            await _gcpDotNetworkDriver.SendRequestAsync("/gcpindex.php?current=1", HttpMethod.Get, null);
+            await _gcpDotNetworkDriver.SendRequestAsync(GcpPath, HttpMethod.Get, null);
 
         var gcpStats = GcpStatParser.ParseGcpStats(stringGcpResponse);
 
@@ -41,24 +44,7 @@ public class GcpDotService : IGcpDotService
             _ => (Color.Parse("#CDCDCD"), Color.Parse("#505050"))
         };
 
-        return CreateCircleImage(centerDotColor, edgeDotColor, 50);
+        return (centerDotColor, edgeDotColor);
     }
-
-    private static Image CreateCircleImage(Color centerColor, Color edgeColor, int radius)
-    {
-        var image = new Image<Rgba32>(radius*2, radius*2);
-        
-        image.Mutate(context => context.Fill(Color.Transparent));
-
-        var gradientBrush = new RadialGradientBrush(
-            new PointF(radius, radius / 2f), 
-            radius,
-            GradientRepetitionMode.None, 
-            new ColorStop(0, centerColor), 
-            new ColorStop(1, edgeColor));
-        
-        image.Mutate(context => context.Fill(gradientBrush, new EllipsePolygon(radius, radius, radius)));
-
-        return image;
-    }
+    
 }
