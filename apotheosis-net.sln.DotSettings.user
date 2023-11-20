@@ -9,5 +9,11 @@
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Services.GcpDotServiceTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Exceptions.GcpDotNetworkExceptionTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageUpload.Services.ImageUploadServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Modules.SpeakModuleTests.SpeakAsync_WhenUserInVoiceChannel_PlaysInVoiceChannel&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Services.TextToSpeechServiceTests.GenerateSpeechFromPromptAsync_ReturnsStream_GivenNetworkDriverReturnsStream&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Services.TextToSpeechServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests.SendRequestReceiveStreamAsync_SendsRequestAndReturnsResponseStream_GivenSuccessfulHttpRequestWithNullBody&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Exceptions.TextToSpeechNetworkExceptionTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

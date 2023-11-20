@@ -1,7 +1,5 @@
 ﻿using Apotheosis.Components.GCPDot.Interfaces;
-using Apotheosis.Components.ImageUpload.Interfaces;
 using Apotheosis.Utils;
-using Discord;
 using Discord.Interactions;
 using SixLabors.ImageSharp.Formats.Png;
 
@@ -10,14 +8,11 @@ namespace Apotheosis.Components.GCPDot.Modules;
 public class GcpDotModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IGcpDotService _gcpDotService;
-    private readonly IImageUploadService _imageUploadService;
 
     public GcpDotModule(
-        IGcpDotService gcpDotService,
-        IImageUploadService imageUploadService)
+        IGcpDotService gcpDotService)
     {
         _gcpDotService = gcpDotService;
-        _imageUploadService = imageUploadService;
     }
 
     [SlashCommand("dot", "Get the real-time GCP Dot")]
@@ -27,10 +22,9 @@ public class GcpDotModule : InteractionModuleBase<SocketInteractionContext>
         
         var gcpDotImage = ImageUtils.CreateCircleImage(centerColor, edgeColor, 50);
 
-        var gcpDotImageBase64String = gcpDotImage.ToBase64String(PngFormat.Instance).Split(",")[1];
-        
-        var gcpDotImageUrl = await _imageUploadService.UploadImageAsync(gcpDotImageBase64String);
-
-        await RespondAsync(embed: new EmbedBuilder().WithImageUrl($"{gcpDotImageUrl}").Build());
+        using var ms = new MemoryStream();
+        await gcpDotImage.SaveAsync(ms, PngFormat.Instance);
+            
+        await Context.Interaction.RespondWithFileAsync(ms, "gcp_dot.png");
     }
 }

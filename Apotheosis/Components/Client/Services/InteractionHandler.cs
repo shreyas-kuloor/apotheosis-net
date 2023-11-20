@@ -2,8 +2,10 @@
 using Apotheosis.Components.Client.Interfaces;
 using Discord;
 using Discord.Interactions;
+using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Apotheosis.Components.Client.Services;
 
@@ -38,7 +40,15 @@ public class InteractionHandler : IInteractionHandler
 
     private async Task ReadyAsync()
     {
-        await _interactionService.RegisterCommandsGloballyAsync();
+        try
+        {
+            await _interactionService.RegisterCommandsGloballyAsync();
+        }
+        catch (HttpException exception)
+        {
+            var json = JsonConvert.SerializeObject(exception.Errors, Formatting.Indented);
+            _logger.LogError( "{Message}", json);
+        }
     }
 
     private async Task HandleInteractionAsync(SocketInteraction interaction)
@@ -53,15 +63,28 @@ public class InteractionHandler : IInteractionHandler
                 switch (result.Error)
                 {
                     case InteractionCommandError.UnmetPrecondition:
+                        _logger.LogError( "{Message}", "Unmet Precondition error when executing command.");
                         break;
-                    case null:
                     case InteractionCommandError.UnknownCommand:
+                        _logger.LogError( "{Message}", "Unknown Command error when executing command.");
+                        break;
                     case InteractionCommandError.ConvertFailed:
+                        _logger.LogError( "{Message}", "Convert Failed error when executing command.");
+                        break;
                     case InteractionCommandError.BadArgs:
+                        _logger.LogError( "{Message}", "Bad Args error when executing command.");
+                        break;
                     case InteractionCommandError.Exception:
+                        _logger.LogError( "{Message}", "Exception error when executing command.");
+                        break;
                     case InteractionCommandError.Unsuccessful:
+                        _logger.LogError( "{Message}", "Unsuccessful error when executing command.");
+                        break;
                     case InteractionCommandError.ParseFailed:
+                        _logger.LogError( "{Message}", "Parse failed error when executing command.");
+                        break;
                     default:
+                        _logger.LogError( "{Message}", "Unknown/default error when executing command.");
                         break;
                 }
         }

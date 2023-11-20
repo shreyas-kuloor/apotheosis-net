@@ -1,7 +1,8 @@
-﻿using Apotheosis.Components.Client.DependencyInjection;
+﻿using Apotheosis.Components.Audio.DependencyInjection;
+using Apotheosis.Components.Client.DependencyInjection;
 using Apotheosis.Components.Client.Interfaces;
 using Apotheosis.Components.GCPDot.DependencyInjection;
-using Apotheosis.Components.ImageUpload.DependencyInjection;
+using Apotheosis.Components.TextToSpeech.DependencyInjection;
 using Apotheosis.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,8 @@ namespace Apotheosis
             services.AddLogging(builder => builder.AddConsole());
             services.AddClientServices(_configuration.GetSection(nameof(AppSettings.Client)));
             services.AddGcpDotServices(_configuration.GetSection(nameof(AppSettings.GcpDot)));
-            services.AddImageUploadServices(_configuration.GetSection(nameof(AppSettings.ImageUpload)));
+            services.AddTextToSpeechServices(_configuration.GetSection(nameof(AppSettings.TextToSpeech)));
+            services.AddAudioServices();
         }
     }
 }

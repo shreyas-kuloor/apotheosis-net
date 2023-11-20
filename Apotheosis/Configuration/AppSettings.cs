@@ -1,6 +1,6 @@
 using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.GCPDot.Configuration;
-using Apotheosis.Components.ImageUpload.Configuration;
+using Apotheosis.Components.TextToSpeech.Configuration;
 
 namespace Apotheosis.Configuration;
 
@@ -17,7 +17,7 @@ public sealed class AppSettings
     public GcpDotSettings? GcpDot{ get; set; }
     
     /// <summary>
-    /// Gets or sets image upload related settings.
+    /// Gets or sets text to speech related settings.
     /// </summary>
-    public ImageUploadSettings? ImageUpload { get; set; }
+    public TextToSpeechSettings? TextToSpeech { get; set; }
 }
