@@ -12,4 +12,9 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /Apotheosis
 COPY --from=build-env /Apotheosis/out .
+
+RUN apt-get update
+RUN apt-get -y install libsodium-dev libopus-dev
+RUN apt-get -y install ffmpeg
+
 ENTRYPOINT ["dotnet", "Apotheosis.dll"]

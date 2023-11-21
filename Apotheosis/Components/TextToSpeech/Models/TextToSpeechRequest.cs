@@ -7,6 +7,7 @@ public sealed class TextToSpeechRequest
     /// <summary>
     /// Gets or sets the text of the request.
     /// </summary>
+    [JsonProperty("text")]
     public string? Text { get; set; }
     
     /// <summary>

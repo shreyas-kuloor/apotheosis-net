@@ -33,9 +33,23 @@ public sealed class TextToSpeechService : ITextToSpeechService
         };
 
         var voiceStream =
-            await _textToSpeechNetworkDriver.SendRequestReceiveStreamAsync($"text-to-speech/{voiceId}/stream", HttpMethod.Post,
+            await _textToSpeechNetworkDriver.SendRequestReceiveStreamAsync(
+                $"/v1/text-to-speech/{voiceId}/stream", 
+                HttpMethod.Post,
                 ttsRequest);
 
         return voiceStream;
+    }
+
+    public async Task<IEnumerable<VoiceDto>> GetVoicesAsync()
+    {
+        var voicesResponse = await _textToSpeechNetworkDriver.SendRequestAsync<VoicesResponse>(
+            "/v1/voices", 
+            HttpMethod.Get, 
+            null);
+
+        var voices = voicesResponse.Voices!.Select(v => new VoiceDto { VoiceId = v.VoiceId, VoiceName = v.Name });
+
+        return voices;
     }
 }
