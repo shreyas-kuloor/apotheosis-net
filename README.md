@@ -4,5 +4,4 @@
 - AI chat command
 - Image generation command
 - Chug command
-- Join/Leave voice channel commands
 - Random reactions
