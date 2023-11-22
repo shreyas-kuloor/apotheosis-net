@@ -49,7 +49,7 @@ public sealed class ElevenLabsNetworkDriver : ITextToSpeechNetworkDriver
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new TextToSpeechNetworkException(null, null);
+            throw new TextToSpeechNetworkException("Eleven Labs returned a non-successful status code", null);
         }
 
         var deserializedData = JsonConvert.DeserializeObject<TResponse>(data);
@@ -77,7 +77,7 @@ public sealed class ElevenLabsNetworkDriver : ITextToSpeechNetworkDriver
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new TextToSpeechNetworkException(null, null);
+            throw new TextToSpeechNetworkException("Eleven Labs returned a non-successful status code", null);
         }
 
         return data;

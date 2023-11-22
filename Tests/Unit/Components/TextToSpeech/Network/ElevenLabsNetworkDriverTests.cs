@@ -2,6 +2,7 @@
 using System.Net.Mime;
 using System.Text;
 using Apotheosis.Components.TextToSpeech.Configuration;
+using Apotheosis.Components.TextToSpeech.Exceptions;
 using Apotheosis.Components.TextToSpeech.Interfaces;
 using Apotheosis.Components.TextToSpeech.Network;
 using FluentAssertions;
@@ -57,13 +58,16 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             Content = new StreamContent(stream)
         };
 
+        IEnumerable<string>? headerValues;
         _mockHandler
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(m => 
                     m.Method == httpMethod
-                    && m.Content == null),
+                    && m.Content == null
+                    && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                    && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
         
@@ -79,7 +83,9 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             Times.Exactly(1),
             ItExpr.Is<HttpRequestMessage>(m => 
                 m.Method == httpMethod
-                && m.Content == null),
+                && m.Content == null
+                && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
             ItExpr.IsAny<CancellationToken>());
     }
     
@@ -105,7 +111,7 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
                 ItExpr.Is<HttpRequestMessage>(m => 
                     m.Method == httpMethod
                     && m.Content != null
-                    && MatchUtils.MatchRequestContent(
+                    && MatchUtils.MatchBasicObject(
                         m.Content, 
                         new StringContent(
                             JsonConvert.SerializeObject(request), 
@@ -129,12 +135,52 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             ItExpr.Is<HttpRequestMessage>(m => 
                 m.Method == httpMethod
                 && m.Content != null
-                && MatchUtils.MatchRequestContent(
+                && MatchUtils.MatchBasicObject(
                     m.Content, 
                     new StringContent(
                         JsonConvert.SerializeObject(request), 
                         Encoding.UTF8, 
                         MediaTypeNames.Application.Json))
+                && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
+            ItExpr.IsAny<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task SendRequestReceiveStreamAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsUnsuccessfulStatusCode()
+    {
+        var httpMethod = HttpMethod.Post;
+        
+        var mockResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.BadRequest,
+            Content = null
+        };
+
+        IEnumerable<string>? headerValues;
+        _mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(m => 
+                    m.Method == httpMethod
+                    && m.Content == null
+                    && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                    && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(mockResponse);
+        
+        var actual = () => _elevenLabsNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
+
+        await actual.Should().ThrowAsync<TextToSpeechNetworkException>()
+            .Where(e => e.Message == "Eleven Labs returned a non-successful status code");
+        
+        _mockHandler.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(1),
+            ItExpr.Is<HttpRequestMessage>(m => 
+                m.Method == httpMethod
+                && m.Content == null
                 && m.Headers.TryGetValues("xi-api-key", out headerValues)
                 && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
             ItExpr.IsAny<CancellationToken>());
@@ -152,13 +198,16 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             Content = new StringContent(JsonConvert.SerializeObject(response))
         };
 
+        IEnumerable<string>? headerValues;
         _mockHandler
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(m => 
                     m.Method == httpMethod
-                    && m.Content == null),
+                    && m.Content == null
+                    && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                    && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
@@ -171,7 +220,9 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             Times.Exactly(1),
             ItExpr.Is<HttpRequestMessage>(m => 
                 m.Method == httpMethod
-                && m.Content == null),
+                && m.Content == null
+                && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
             ItExpr.IsAny<CancellationToken>());
     }
     
@@ -188,6 +239,7 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             Content = new StringContent(JsonConvert.SerializeObject(response))
         };
 
+        IEnumerable<string>? headerValues;
         _mockHandler
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -196,12 +248,14 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
                     m => 
                         m.Method == httpMethod
                         && m.Content != null
-                        && MatchUtils.MatchRequestContent(
+                        && MatchUtils.MatchBasicObject(
                             m.Content, 
                             new StringContent(
                                 JsonConvert.SerializeObject(request), 
                                 Encoding.UTF8, 
-                                MediaTypeNames.Application.Json))),
+                                MediaTypeNames.Application.Json))
+                        && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                        && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
@@ -215,12 +269,86 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
             ItExpr.Is<HttpRequestMessage>(m => 
                 m.Method == httpMethod
                 && m.Content != null
-                && MatchUtils.MatchRequestContent(
+                && MatchUtils.MatchBasicObject(
                     m.Content, 
                     new StringContent(
                         JsonConvert.SerializeObject(request), 
                         Encoding.UTF8, 
-                        MediaTypeNames.Application.Json))),
+                        MediaTypeNames.Application.Json))
+                && m.Headers.TryGetValues("xi-api-key", out headerValues)
+                && headerValues.Contains(_textToSpeechSettings.ElevenLabsApiKey)),
+            ItExpr.IsAny<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task SendRequestAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsUnsuccessfulStatusCode()
+    {
+        var httpMethod = HttpMethod.Post;
+        
+        var mockResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.BadRequest,
+            Content = null
+        };
+
+        _mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(m => 
+                    m.Method == httpMethod
+                    && m.Content == null),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(mockResponse);
+
+
+        var actual = () => _elevenLabsNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
+
+        await actual.Should().ThrowAsync<TextToSpeechNetworkException>()
+            .Where(e => e.Message == "Eleven Labs returned a non-successful status code");
+        
+        _mockHandler.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(1),
+            ItExpr.Is<HttpRequestMessage>(m => 
+                m.Method == httpMethod
+                && m.Content == null),
+            ItExpr.IsAny<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task SendRequestAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsNonJsonResponse()
+    {
+        var httpMethod = HttpMethod.Post;
+        
+        var mockResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(string.Empty)
+        };
+
+        _mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(m => 
+                    m.Method == httpMethod
+                    && m.Content == null),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(mockResponse);
+
+
+        var actual = () => _elevenLabsNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
+
+        await actual.Should().ThrowAsync<TextToSpeechNetworkException>()
+            .Where(e => e.Message == "An error occured while sending the Eleven Labs network request.");
+        
+        _mockHandler.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(1),
+            ItExpr.Is<HttpRequestMessage>(m => 
+                m.Method == httpMethod
+                && m.Content == null),
             ItExpr.IsAny<CancellationToken>());
     }
 

@@ -45,7 +45,7 @@ public sealed class GcpDotNetworkDriver : IGcpDotNetworkDriver
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new GcpDotNetworkException(null, null);
+            throw new GcpDotNetworkException("GCP Dot service returned a non-successful status code", null);
         }
 
         return data;

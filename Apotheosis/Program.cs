@@ -2,6 +2,7 @@
 using Apotheosis.Components.Client.DependencyInjection;
 using Apotheosis.Components.Client.Interfaces;
 using Apotheosis.Components.GCPDot.DependencyInjection;
+using Apotheosis.Components.ImageGen.DependencyInjection;
 using Apotheosis.Components.TextToSpeech.DependencyInjection;
 using Apotheosis.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +43,7 @@ namespace Apotheosis
             services.AddGcpDotServices(_configuration.GetSection(nameof(AppSettings.GcpDot)));
             services.AddTextToSpeechServices(_configuration.GetSection(nameof(AppSettings.TextToSpeech)));
             services.AddAudioServices();
+            services.AddImageGenServices(_configuration.GetSection(nameof(AppSettings.ImageGen)));
         }
     }
 }

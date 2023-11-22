@@ -5,11 +5,11 @@ namespace Tests.Utils;
 
 public static class MatchUtils
 {
-    public static bool MatchRequestContent(HttpContent actualContent, HttpContent expectedContent)
+    public static bool MatchBasicObject(object? actual, object? expected)
     {
         try
         {
-            actualContent.Should().BeEquivalentTo(expectedContent);
+            actual.Should().BeEquivalentTo(expected);
             return true;
         }
         catch (AssertionFailedException)

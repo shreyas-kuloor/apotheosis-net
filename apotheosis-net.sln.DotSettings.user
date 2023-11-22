@@ -15,5 +15,8 @@
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests.SendRequestReceiveStreamAsync_SendsRequestAndReturnsResponseStream_GivenSuccessfulHttpRequestWithNullBody&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Exceptions.TextToSpeechNetworkExceptionTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Network.StableDiffusionNetworkDriverTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Exceptions.ImageGenNetworkExceptionTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Services.ImageGenServiceTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

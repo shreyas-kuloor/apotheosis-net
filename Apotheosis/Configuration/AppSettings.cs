@@ -1,5 +1,6 @@
 using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.GCPDot.Configuration;
+using Apotheosis.Components.ImageGen.Configuration;
 using Apotheosis.Components.TextToSpeech.Configuration;
 
 namespace Apotheosis.Configuration;
@@ -20,4 +21,9 @@ public sealed class AppSettings
     /// Gets or sets text to speech related settings.
     /// </summary>
     public TextToSpeechSettings? TextToSpeech { get; set; }
+    
+    /// <summary>
+    /// Gets or sets image generation related settings.
+    /// </summary>
+    public ImageGenSettings? ImageGen { get; set; }
 }

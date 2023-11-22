@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Apotheosis.Components.GCPDot.Configuration;
-using Apotheosis.Components.GCPDot.Exceptions;
-using Apotheosis.Components.GCPDot.Interfaces;
-using Apotheosis.Components.GCPDot.Network;
+using Apotheosis.Components.ImageGen.Configuration;
+using Apotheosis.Components.ImageGen.Exceptions;
+using Apotheosis.Components.ImageGen.Interfaces;
+using Apotheosis.Components.ImageGen.Network;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -12,48 +12,49 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using Tests.Utils;
 
-namespace Tests.Unit.Components.GcpDot.Network;
+namespace Tests.Unit.Components.ImageGen.Network;
 
-public sealed class GcpDotNetworkDriverTests : IDisposable
+public sealed class StableDiffusionNetworkDriverTests : IDisposable
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
     
-    
-    private readonly Mock<IOptions<GcpDotSettings>> _gcpDotOptionsMock;
+    private readonly Mock<IOptions<ImageGenSettings>> _imageGenOptionsMock;
     private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly IGcpDotNetworkDriver _gcpDotNetworkDriver;
+    private readonly IImageGenNetworkDriver _imageGenNetworkDriver;
     
-    private readonly GcpDotSettings _gcpDotSettings = new()
+    private readonly ImageGenSettings _imageGenSettings = new()
     {
-        BaseUrl = new Uri("https://example.com/"),
+        StableDiffusionBaseUrl = new Uri("https://example.com/"),
+        StableDiffusionSamplingSteps = 50
     };
 
-    public GcpDotNetworkDriverTests()
+    public StableDiffusionNetworkDriverTests()
     {
-        _gcpDotOptionsMock = new Mock<IOptions<GcpDotSettings>>(MockBehavior.Strict);
-        _gcpDotOptionsMock.Setup(o => o.Value).Returns(_gcpDotSettings);
+        _imageGenOptionsMock = new Mock<IOptions<ImageGenSettings>>(MockBehavior.Strict);
+        _imageGenOptionsMock.Setup(o => o.Value).Returns(_imageGenSettings);
         
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _gcpDotNetworkDriver = new GcpDotNetworkDriver(httpClient, _gcpDotOptionsMock.Object);
+        _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, _imageGenOptionsMock.Object);
     }
 
     public void Dispose()
     {
-        _gcpDotOptionsMock.VerifyAll();
+        _imageGenOptionsMock.VerifyAll();
     }
-
+    
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNullBody()
     {
-        var httpMethod = HttpMethod.Get;
+        var httpMethod = HttpMethod.Post;
+        var response = new TestResponse { ResponseContent = ResponseString };
         
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(ResponseString)
+            Content = new StringContent(JsonConvert.SerializeObject(response))
         };
 
         _mockHandler
@@ -66,9 +67,9 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
-        var actual = await _gcpDotNetworkDriver.SendRequestAsync("/path", httpMethod, null);
+        var actual = await _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
         
-        actual.Should().BeEquivalentTo(ResponseString);
+        actual.Should().BeEquivalentTo(response);
         
         _mockHandler.Protected().Verify(
             "SendAsync",
@@ -82,13 +83,14 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNonNullBody()
     {
+        var httpMethod = HttpMethod.Post;
         var request = new TestRequest { RequestContent = RequestString };
-        var httpMethod = HttpMethod.Get;
+        var response = new TestResponse { ResponseContent = ResponseString };
         
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(ResponseString)
+            Content = new StringContent(JsonConvert.SerializeObject(response))
         };
 
         _mockHandler
@@ -108,9 +110,9 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
-        var actual = await _gcpDotNetworkDriver.SendRequestAsync("/path", httpMethod, request);
+        var actual = await _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, request);
 
-        actual.Should().BeEquivalentTo(ResponseString);
+        actual.Should().BeEquivalentTo(response);
         
         _mockHandler.Protected().Verify(
             "SendAsync",
@@ -147,11 +149,48 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
                     && m.Content == null),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
-        
-        var actual = () => _gcpDotNetworkDriver.SendRequestAsync("/path", httpMethod, null);
 
-        await actual.Should().ThrowAsync<GcpDotNetworkException>()
-            .Where(e => e.Message == "GCP Dot service returned a non-successful status code");
+
+        var actual = () => _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
+
+        await actual.Should().ThrowAsync<ImageGenNetworkException>()
+            .Where(e => e.Message == "Stable Diffusion returned a non-successful status code");
+        
+        _mockHandler.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(1),
+            ItExpr.Is<HttpRequestMessage>(m => 
+                m.Method == httpMethod
+                && m.Content == null),
+            ItExpr.IsAny<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task SendRequestAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsNonJsonResponse()
+    {
+        var httpMethod = HttpMethod.Post;
+        
+        var mockResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(string.Empty)
+        };
+
+        _mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(m => 
+                    m.Method == httpMethod
+                    && m.Content == null),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(mockResponse);
+
+
+        var actual = () => _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
+
+        await actual.Should().ThrowAsync<ImageGenNetworkException>()
+            .Where(e => e.Message == "An error occured while sending the Stable Diffusion network request.");
         
         _mockHandler.Protected().Verify(
             "SendAsync",
@@ -166,5 +205,11 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string? RequestContent { get; set; }
+    }
+    
+    private class TestResponse
+    {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        public string? ResponseContent { get; set; }
     }
 }
