@@ -18,5 +18,10 @@
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Network.StableDiffusionNetworkDriverTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Exceptions.ImageGenNetworkExceptionTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Services.ImageGenServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Exceptions.AiChatNetworkExceptionTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Exceptions.AiThreadChannelStoreExceptionTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Network.OpenAiNetworkDriverTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Services.AiChatServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Services.AiThreadChannelRepositoryTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

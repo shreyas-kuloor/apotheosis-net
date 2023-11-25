@@ -6,7 +6,7 @@ namespace Tests.Unit.Components.ImageGen.Exceptions;
 public class ImageGenNetworkExceptionTests
 {
     [Fact]
-    public void ConstructorWithMessage_CreatesNewGcpDotException()
+    public void ConstructorWithMessage_CreatesNewImageGenNetworkException()
     {
         const string message = "Image Gen Network Exception";
         var exception = new ImageGenNetworkException(message);
@@ -16,7 +16,7 @@ public class ImageGenNetworkExceptionTests
     }
     
     [Fact]
-    public void ConstructorWithMessageAndInnerException_CreatesNewGcpDotException()
+    public void ConstructorWithMessageAndInnerException_CreatesNewImageGenNetworkException()
     {
         const string message = "Image Gen Network Exception";
         var innerException = new Exception();

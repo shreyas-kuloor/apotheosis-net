@@ -6,7 +6,7 @@ namespace Tests.Unit.Components.TextToSpeech.Exceptions;
 public class TextToSpeechNetworkExceptionTests
 {
     [Fact]
-    public void ConstructorWithMessage_CreatesNewGcpDotException()
+    public void ConstructorWithMessage_CreatesNewTextToSpeechNetworkException()
     {
         const string message = "Text to speech Network Exception";
         var exception = new TextToSpeechNetworkException(message);
@@ -16,7 +16,7 @@ public class TextToSpeechNetworkExceptionTests
     }
     
     [Fact]
-    public void ConstructorWithMessageAndInnerException_CreatesNewGcpDotException()
+    public void ConstructorWithMessageAndInnerException_CreatesNewTextToSpeechNetworkException()
     {
         const string message = "Text to speech Network Exception";
         var innerException = new Exception();

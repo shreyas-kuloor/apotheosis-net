@@ -1,3 +1,4 @@
+using Apotheosis.Components.AiChat.Configuration;
 using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.GCPDot.Configuration;
 using Apotheosis.Components.ImageGen.Configuration;
@@ -26,4 +27,9 @@ public sealed class AppSettings
     /// Gets or sets image generation related settings.
     /// </summary>
     public ImageGenSettings? ImageGen { get; set; }
+    
+    /// <summary>
+    /// Gets or sets AI chat related settings.
+    /// </summary>
+    public AiChatSettings? AiChat { get; set; }
 }

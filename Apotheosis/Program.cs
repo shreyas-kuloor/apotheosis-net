@@ -1,6 +1,8 @@
-﻿using Apotheosis.Components.Audio.DependencyInjection;
+﻿using Apotheosis.Components.AiChat.DependencyInjection;
+using Apotheosis.Components.Audio.DependencyInjection;
 using Apotheosis.Components.Client.DependencyInjection;
 using Apotheosis.Components.Client.Interfaces;
+using Apotheosis.Components.DateTime.DependencyInjection;
 using Apotheosis.Components.GCPDot.DependencyInjection;
 using Apotheosis.Components.ImageGen.DependencyInjection;
 using Apotheosis.Components.TextToSpeech.DependencyInjection;
@@ -11,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Apotheosis
 {
-    public class Program
+    public sealed class Program
     {
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
@@ -44,6 +46,8 @@ namespace Apotheosis
             services.AddTextToSpeechServices(_configuration.GetSection(nameof(AppSettings.TextToSpeech)));
             services.AddAudioServices();
             services.AddImageGenServices(_configuration.GetSection(nameof(AppSettings.ImageGen)));
+            services.AddDateTimeServices();
+            services.AddAiChatServices(_configuration.GetSection(nameof(AppSettings.AiChat)));
         }
     }
 }
