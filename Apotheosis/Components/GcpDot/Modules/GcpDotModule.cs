@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Formats.Png;
 
 namespace Apotheosis.Components.GCPDot.Modules;
 
-public class GcpDotModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class GcpDotModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IGcpDotService _gcpDotService;
 

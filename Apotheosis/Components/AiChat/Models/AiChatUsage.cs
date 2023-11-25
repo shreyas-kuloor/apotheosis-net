@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.AiChat.Models;
 
-public class AiChatUsage
+public sealed class AiChatUsage
 {
     /// <summary>
     /// Gets or sets the prompt token count.

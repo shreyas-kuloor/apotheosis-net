@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Tests.Unit.Components.AiChat.Exceptions;
 
-public class AiChatNetworkExceptionTests
+public sealed class AiChatNetworkExceptionTests
 {
     [Fact]
     public void ConstructorWithMessage_CreatesNewAiChatNetworkException()

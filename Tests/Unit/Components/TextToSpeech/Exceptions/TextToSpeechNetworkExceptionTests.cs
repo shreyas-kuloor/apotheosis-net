@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Tests.Unit.Components.TextToSpeech.Exceptions;
 
-public class TextToSpeechNetworkExceptionTests
+public sealed class TextToSpeechNetworkExceptionTests
 {
     [Fact]
     public void ConstructorWithMessage_CreatesNewTextToSpeechNetworkException()

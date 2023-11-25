@@ -3,7 +3,7 @@ using Apotheosis.Components.Audio.Interfaces;
 
 namespace Apotheosis.Components.Audio.Services;
 
-public class AudioService : IAudioService
+public sealed class AudioService : IAudioService
 { 
     public async Task<Process> CreateStreamProcessAsync(Stream pcmStream)
     {

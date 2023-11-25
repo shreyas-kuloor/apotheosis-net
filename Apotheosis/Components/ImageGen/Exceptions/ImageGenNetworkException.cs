@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.ImageGen.Exceptions;
 
-public class ImageGenNetworkException : Exception
+public sealed class ImageGenNetworkException : Exception
 {
     public ImageGenNetworkException()
     {

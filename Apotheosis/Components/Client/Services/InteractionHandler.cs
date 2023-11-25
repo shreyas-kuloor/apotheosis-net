@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Apotheosis.Components.Client.Services;
 
-public class InteractionHandler : IInteractionHandler
+public sealed class InteractionHandler : IInteractionHandler
 {
     private readonly DiscordSocketClient _discordSocketClient;
     private readonly InteractionService _interactionService;

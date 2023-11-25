@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.ImageGen.Models;
 
-public class StableDiffusionTextRequest
+public sealed class StableDiffusionTextRequest
 {
     /// <summary>
     /// Gets or sets the text prompt for the image generation request.

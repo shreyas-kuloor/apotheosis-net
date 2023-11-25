@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.TextToSpeech.Exceptions;
 
-public class TextToSpeechNetworkException : Exception
+public sealed class TextToSpeechNetworkException : Exception
 {
     public TextToSpeechNetworkException()
     {

@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Tests.Unit.Components.AiChat.Exceptions;
 
-public class AiThreadChannelStoreExceptionTests
+public sealed class AiThreadChannelStoreExceptionTests
 {
     [Fact]
     public void ConstructorWithMessage_CreatesNewAiThreadChannelStoreException()

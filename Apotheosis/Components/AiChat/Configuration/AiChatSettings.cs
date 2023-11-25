@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.AiChat.Configuration;
 
-public class AiChatSettings
+public sealed class AiChatSettings
 {
     /// <summary>
     /// Gets or sets the Open AI Base URL.

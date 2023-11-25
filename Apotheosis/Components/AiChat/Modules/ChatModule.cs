@@ -7,7 +7,7 @@ using Color = Discord.Color;
 
 namespace Apotheosis.Components.AiChat.Modules;
 
-public class ChatModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class ChatModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IAiChatService _aiChatService;
     private readonly IAiThreadChannelRepository _aiThreadChannelRepository;

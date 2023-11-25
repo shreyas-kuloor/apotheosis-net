@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.ImageGen.Models;
 
-public class StableDiffusionResponse
+public sealed class StableDiffusionResponse
 {
     /// <summary>
     /// Gets or sets the list of images returned by Stable Diffusion.

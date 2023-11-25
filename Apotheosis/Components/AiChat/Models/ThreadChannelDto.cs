@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.AiChat.Models;
 
-public class ThreadChannelDto
+public sealed class ThreadChannelDto
 {
     /// <summary>
     /// Gets or sets the thread ID of the thread channel.

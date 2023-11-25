@@ -3,7 +3,7 @@ using Discord.Interactions;
 
 namespace Apotheosis.Components.ImageGen.Modules;
 
-public class ImageModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class ImageModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IImageGenService _imageGenService;
 

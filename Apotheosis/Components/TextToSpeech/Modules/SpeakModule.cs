@@ -6,7 +6,7 @@ using Discord.Interactions;
 
 namespace Apotheosis.Components.TextToSpeech.Modules;
 
-public class SpeakModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class SpeakModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IAudioService _audioService;
     private readonly ITextToSpeechService _textToSpeechService;

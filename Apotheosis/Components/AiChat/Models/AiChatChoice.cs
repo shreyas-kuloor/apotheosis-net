@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.AiChat.Models;
 
-public class AiChatChoice
+public sealed class AiChatChoice
 {
     /// <summary>
     /// Gets or sets the index of the chat choice.

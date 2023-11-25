@@ -3,7 +3,7 @@ using Discord.Interactions;
 
 namespace Apotheosis.Components.JoinLeave.Modules;
 
-public class JoinLeaveModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class JoinLeaveModule : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("join", "Invites the bot to join your voice channel.")]
     public async Task JoinVoiceAsync()

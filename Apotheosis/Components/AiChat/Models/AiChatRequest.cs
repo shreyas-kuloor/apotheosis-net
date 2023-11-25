@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.AiChat.Models;
 
-public class AiChatRequest
+public sealed class AiChatRequest
 {
     /// <summary>
     /// Gets or sets the model to use for the AI chat request.

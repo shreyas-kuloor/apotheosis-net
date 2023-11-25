@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Tests.Unit.Components.GcpDot.Exceptions;
 
-public class GcpDotNetworkExceptionTests
+public sealed class GcpDotNetworkExceptionTests
 {
     [Fact]
     public void ConstructorWithMessage_CreatesNewGcpDotException()

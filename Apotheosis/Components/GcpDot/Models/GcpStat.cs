@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.GCPDot.Models;
 
-public class GcpStat
+public sealed class GcpStat
 {
     /// <summary>
     /// Gets or sets the time stamp of a GCP stat.

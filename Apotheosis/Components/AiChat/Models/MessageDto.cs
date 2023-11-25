@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.AiChat.Models;
 
-public class MessageDto
+public sealed class MessageDto
 {
     /// <summary>
     /// Gets or sets the role of the message.

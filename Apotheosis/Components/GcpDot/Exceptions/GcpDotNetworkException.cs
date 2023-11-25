@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.GCPDot.Exceptions;
 
-public class GcpDotNetworkException : Exception
+public sealed class GcpDotNetworkException : Exception
 {
     public GcpDotNetworkException()
     {

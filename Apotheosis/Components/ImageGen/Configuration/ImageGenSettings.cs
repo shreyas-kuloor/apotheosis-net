@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.ImageGen.Configuration;
 
-public class ImageGenSettings
+public sealed class ImageGenSettings
 {
     /// <summary>
     /// Gets or sets the stable diffusion base URL.

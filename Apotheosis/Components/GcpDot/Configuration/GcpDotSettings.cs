@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.GCPDot.Configuration;
 
-public class GcpDotSettings
+public sealed class GcpDotSettings
 {
     /// <summary>
     /// The base URL for GCP Dot requests.

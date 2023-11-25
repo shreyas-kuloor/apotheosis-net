@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.AiChat.Models;
 
-public class AiChatMessage
+public sealed class AiChatMessage
 {
     /// <summary>
     /// Gets or sets the role of the AI chat message.

@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.AiChat.Models;
 
-public class AiChatResponse
+public sealed class AiChatResponse
 {
     /// <summary>
     /// Gets or sets the ID of the AI chat.

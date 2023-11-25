@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Tests.Unit.Components.ImageGen.Exceptions;
 
-public class ImageGenNetworkExceptionTests
+public sealed class ImageGenNetworkExceptionTests
 {
     [Fact]
     public void ConstructorWithMessage_CreatesNewImageGenNetworkException()

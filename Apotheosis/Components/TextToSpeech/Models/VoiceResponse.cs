@@ -2,7 +2,7 @@
 
 namespace Apotheosis.Components.TextToSpeech.Models;
 
-public class VoiceResponse
+public sealed class VoiceResponse
 {
     /// <summary>
     /// Gets or sets the voice ID of the response.

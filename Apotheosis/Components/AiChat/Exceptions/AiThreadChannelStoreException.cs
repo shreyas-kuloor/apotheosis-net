@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.AiChat.Exceptions;
 
-public class AiThreadChannelStoreException : Exception
+public sealed class AiThreadChannelStoreException : Exception
 {
     public AiThreadChannelStoreException()
     {

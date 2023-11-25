@@ -3,7 +3,7 @@ using Color = SixLabors.ImageSharp.Color;
 
 namespace Apotheosis.Components.GCPDot.Services;
 
-public class GcpDotService : IGcpDotService
+public sealed class GcpDotService : IGcpDotService
 {
     /// <summary>
     /// The path for the request to retrieve the gcp stat information.

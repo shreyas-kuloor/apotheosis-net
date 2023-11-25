@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Apotheosis.Components.Client.Services;
 
-public class ClientService: IClientService
+public sealed class ClientService: IClientService
 {
     private readonly ClientSettings _clientSettings;
     private readonly DiscordSocketClient _discordSocketClient;

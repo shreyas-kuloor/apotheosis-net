@@ -1,6 +1,6 @@
 ﻿namespace Apotheosis.Components.AiChat.Exceptions;
 
-public class AiChatNetworkException : Exception
+public sealed class AiChatNetworkException : Exception
 {
     public AiChatNetworkException()
     {
