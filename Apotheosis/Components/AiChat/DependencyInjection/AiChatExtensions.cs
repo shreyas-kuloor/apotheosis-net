@@ -25,6 +25,7 @@ public static class AiChatExtensions
         AddHttpClient<IAiChatNetworkDriver, OpenAiNetworkDriver>(services);
         services.AddSingleton<IAiThreadChannelRepository, AiThreadChannelRepository>();
         services.AddScoped<IAiChatService, AiChatService>();
+        services.AddSingleton<IAiChatThreadMessageHandler, AiChatThreadMessageHandler>();
     }
     
     private static void AddHttpClient<TClient, TImplementation>(

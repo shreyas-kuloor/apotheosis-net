@@ -4,9 +4,9 @@ namespace Apotheosis.Components.AiChat.Interfaces;
 
 public interface IAiThreadChannelRepository
 {
-    void StoreThreadChannel(ulong threadId);
+    void StoreThreadChannel(ThreadChannelDto threadChannelDto);
 
     void ClearExpiredThreadChannels();
 
-    IEnumerable<ThreadChannelDto> GetStoredThreadChannels();
+    IEnumerable<ThreadChannelDto> GetStoredActiveThreadChannels();
 }

@@ -11,4 +11,9 @@ public sealed class ThreadChannelDto
     /// Gets or sets the expiration of the thread channel.
     /// </summary>
     public DateTimeOffset Expiration { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the initial message content of the thread channel.
+    /// </summary>
+    public string? InitialMessageContent { get; set; }
 }

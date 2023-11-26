@@ -1,8 +1,11 @@
-﻿using Apotheosis.Components.AiChat.Exceptions;
+﻿using Apotheosis.Components.AiChat.Configuration;
+using Apotheosis.Components.AiChat.Exceptions;
 using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
+using Apotheosis.Components.DateTime.Interfaces;
 using Discord;
 using Discord.Interactions;
+using Microsoft.Extensions.Options;
 using Color = Discord.Color;
 
 namespace Apotheosis.Components.AiChat.Modules;
@@ -11,18 +14,30 @@ public sealed class ChatModule : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IAiChatService _aiChatService;
     private readonly IAiThreadChannelRepository _aiThreadChannelRepository;
+    private readonly AiChatSettings _aiChatSettings;
+    private readonly IDateTimeService _dateTimeService;
 
     public ChatModule(
         IAiChatService aiChatService,
-        IAiThreadChannelRepository aiThreadChannelRepository)
+        IAiThreadChannelRepository aiThreadChannelRepository,
+        IOptions<AiChatSettings> aiChatOptions,
+        IDateTimeService dateTimeService)
     {
         _aiChatService = aiChatService;
         _aiThreadChannelRepository = aiThreadChannelRepository;
+        _aiChatSettings = aiChatOptions.Value;
+        _dateTimeService = dateTimeService;
     }
 
     [SlashCommand("chat", "Chat with the bot.")]
     public async Task ChatAsync(string prompt)
     {
+        if (Context.Channel is IThreadChannel)
+        {
+            await RespondAsync("This command is not usable in threads. Please call it again in a main channel!");
+            return;
+        }
+        
         await DeferAsync();
 
         IEnumerable<AiChatMessageDto> response;
@@ -59,7 +74,15 @@ public sealed class ChatModule : InteractionModuleBase<SocketInteractionContext>
             ThreadArchiveDuration.OneDay,
             initialMessage);
 
-        _aiThreadChannelRepository.StoreThreadChannel(thread.Id);
+        _aiThreadChannelRepository.ClearExpiredThreadChannels();
+        
+        _aiThreadChannelRepository.StoreThreadChannel(
+            new ThreadChannelDto
+            {
+                ThreadId = thread.Id, 
+                Expiration = _dateTimeService.UtcNow.AddMinutes(_aiChatSettings.ThreadExpirationMinutes),
+                InitialMessageContent = prompt
+            });
 
         var aiChatMessageDtos = response.ToList();
         

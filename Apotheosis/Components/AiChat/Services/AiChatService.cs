@@ -47,4 +47,35 @@ public sealed class AiChatService : IAiChatService
             Content = c.Message!.Content
         });
     }
+
+    public async Task<IEnumerable<AiChatMessageDto>> SendThreadToAiAsync(IEnumerable<ThreadMessageDto> threadMessages)
+    {
+        var transformedMessages = threadMessages.Select(tm => new AiChatMessage
+        {
+            Role = tm.IsBot ? "assistant" : "user",
+            Content = tm.Content,
+        });
+        
+        var request = new AiChatRequest
+        {
+            Model = _aiChatSettings.OpenAiModel,
+            Messages = new List<AiChatMessage>
+            {
+                new()
+                {
+                    Role = "system",
+                    Content = _aiChatSettings.ChatSystemInstruction
+                }
+            }.Concat(transformedMessages).ToList()
+        };
+
+        var response =
+            await _aiChatNetworkDriver.SendRequestAsync<AiChatResponse>("/v1/chat/completions", HttpMethod.Post, request);
+
+        return response.Choices!.Select(c => new AiChatMessageDto
+        {
+            Index = c.Index,
+            Content = c.Message!.Content
+        });
+    }
 }

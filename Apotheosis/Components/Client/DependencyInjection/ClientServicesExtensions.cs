@@ -1,6 +1,7 @@
 using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.Client.Interfaces;
 using Apotheosis.Components.Client.Services;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +20,7 @@ public static class ClientServicesExtensions
     {
         services.AddSingleton<IClientService, ClientService>();
         services.Configure<ClientSettings>(clientSection);
-        services.AddSingleton<DiscordSocketClient>();
+        services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig { GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent }));
         services.AddSingleton(
             x => new InteractionService(
                 x.GetRequiredService<DiscordSocketClient>()));

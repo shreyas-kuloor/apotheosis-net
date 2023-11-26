@@ -1,3 +1,4 @@
+using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.Client.Interfaces;
 using Discord;
@@ -13,17 +14,20 @@ public sealed class ClientService: IClientService
     private readonly DiscordSocketClient _discordSocketClient;
     private readonly ILogger<ClientService> _logger;
     private readonly IInteractionHandler _interactionHandler;
+    private readonly IAiChatThreadMessageHandler _aiChatThreadMessageHandler;
 
     public ClientService(
         IOptions<ClientSettings> clientOptions, 
         DiscordSocketClient discordSocketClient, 
         ILogger<ClientService> logger,
-        IInteractionHandler interactionHandler)
+        IInteractionHandler interactionHandler,
+        IAiChatThreadMessageHandler aiChatThreadMessageHandler)
     {
         _clientSettings = clientOptions.Value;
         _discordSocketClient = discordSocketClient;
         _logger = logger;
         _interactionHandler = interactionHandler;
+        _aiChatThreadMessageHandler = aiChatThreadMessageHandler;
     }
 
     public async Task RunAsync()
@@ -34,6 +38,8 @@ public sealed class ClientService: IClientService
 
         await _discordSocketClient.LoginAsync(TokenType.Bot, _clientSettings.BotToken);
         await _discordSocketClient.StartAsync();
+        
+        _aiChatThreadMessageHandler.InitializeAsync();
 
         await Task.Delay(Timeout.Infinite);
     }

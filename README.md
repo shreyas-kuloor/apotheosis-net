@@ -1,7 +1,6 @@
 ﻿TODO List:
 
 - Error handling - have the bot communicate messages on error?
-- Thread functionality for AI chat
 - Support image input in AI chat command
 - Chug command
 - Random reactions

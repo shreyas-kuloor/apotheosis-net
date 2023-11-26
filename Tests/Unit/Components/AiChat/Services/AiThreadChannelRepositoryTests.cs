@@ -1,38 +1,27 @@
-﻿using Apotheosis.Components.AiChat.Configuration;
-using Apotheosis.Components.AiChat.Exceptions;
+﻿using Apotheosis.Components.AiChat.Exceptions;
 using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
 using Apotheosis.Components.AiChat.Services;
 using Apotheosis.Components.DateTime.Interfaces;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Tests.Unit.Components.AiChat.Services;
 
 public sealed class AiThreadChannelRepositoryTests : IDisposable
 {
-    private readonly Mock<IOptions<AiChatSettings>> _aiChatOptionsMock;
     private readonly Mock<IDateTimeService> _dateTimeServiceMock;
     private readonly IAiThreadChannelRepository _aiThreadChannelRepository;
-    
-    private readonly AiChatSettings _aiChatSettings = new()
-    {
-        ThreadExpirationMinutes = 1440
-    };
 
     public AiThreadChannelRepositoryTests()
     {
-        _aiChatOptionsMock = new Mock<IOptions<AiChatSettings>>(MockBehavior.Strict);
-        _aiChatOptionsMock.Setup(o => o.Value).Returns(_aiChatSettings);
         _dateTimeServiceMock = new Mock<IDateTimeService>(MockBehavior.Strict);
 
-        _aiThreadChannelRepository = new AiThreadChannelRepository(_aiChatOptionsMock.Object, _dateTimeServiceMock.Object);
+        _aiThreadChannelRepository = new AiThreadChannelRepository(_dateTimeServiceMock.Object);
     }
 
     public void Dispose()
     {
-        _aiChatOptionsMock.VerifyAll();
         _dateTimeServiceMock.VerifyAll();
     }
 
@@ -40,33 +29,53 @@ public sealed class AiThreadChannelRepositoryTests : IDisposable
     public void StoreThreadChannel_DoesNotThrowException_GivenSuccessfulAdd()
     {
         const ulong threadId = 123;
-        const string createDateTimeOffset = "2023-11-25T18:00:00+0000";
+        const string dateTimeOffset = "2023-11-25T18:00:00+0000";
         const string expiredDateTimeOffset = "2023-11-26T18:00:00+0000";
+        const string initialMessage = "example";
+        
+        var threadDto = new ThreadChannelDto
+        {
+            ThreadId = threadId,
+            Expiration = DateTimeOffset.Parse(expiredDateTimeOffset),
+            InitialMessageContent = initialMessage
+        };
 
-        _dateTimeServiceMock.SetupGet(s => s.UtcNow).Returns(DateTimeOffset.Parse(createDateTimeOffset));
-        var exception = Record.Exception(() => _aiThreadChannelRepository.StoreThreadChannel(threadId));
+        _dateTimeServiceMock.SetupGet(d => d.UtcNow).Returns(DateTimeOffset.Parse(dateTimeOffset));
+        
+        var exception = Record.Exception(() => _aiThreadChannelRepository.StoreThreadChannel(threadDto));
         
         exception.Should().BeNull();
         
-        var existingThreadChannels = _aiThreadChannelRepository.GetStoredThreadChannels();
+        var existingThreadChannels = _aiThreadChannelRepository.GetStoredActiveThreadChannels();
 
-        existingThreadChannels.Should().ContainEquivalentOf(new ThreadChannelDto
-        {
-            ThreadId = threadId,
-            Expiration = DateTimeOffset.Parse(expiredDateTimeOffset)
-        });
+        existingThreadChannels.Should().Contain(threadDto);
     }
     
     [Fact]
     public void StoreThreadChannel_ThrowsAiThreadChannelStoreException_GivenUnsuccessfulAdd()
     {
         const ulong threadId = 123;
+        const string dateTimeOffset1 = "2023-11-25T18:00:00+0000";
+        const string dateTimeOffset2 = "2023-11-25T18:00:10+0000";
+        const string initialMessage = "example";
         
-        _dateTimeServiceMock.SetupGet(s => s.UtcNow).Returns(DateTimeOffset.Parse("2023-11-25T18:00:00+0000"));
-        _dateTimeServiceMock.SetupGet(s => s.UtcNow).Returns(DateTimeOffset.Parse("2023-11-25T18:00:10+0000"));
-       _aiThreadChannelRepository.StoreThreadChannel(threadId);
+        var threadDto1 = new ThreadChannelDto
+        {
+            ThreadId = threadId,
+            Expiration = DateTimeOffset.Parse(dateTimeOffset1),
+            InitialMessageContent = initialMessage
+        };
+        
+        var threadDto2 = new ThreadChannelDto
+        {
+            ThreadId = threadId,
+            Expiration = DateTimeOffset.Parse(dateTimeOffset2),
+            InitialMessageContent = initialMessage
+        };
+        
+       _aiThreadChannelRepository.StoreThreadChannel(threadDto1);
 
-       var actual = () => _aiThreadChannelRepository.StoreThreadChannel(threadId);
+       var actual = () => _aiThreadChannelRepository.StoreThreadChannel(threadDto2);
 
        actual.Should().Throw<AiThreadChannelStoreException>()
            .Where(e => e.Message == "An error occurred while trying to store a thread channel");
@@ -77,40 +86,43 @@ public sealed class AiThreadChannelRepositoryTests : IDisposable
     {
         const ulong threadId1 = 123;
         const ulong threadId2 = 124;
-        const string dateTimeOffset1 = "2023-11-25T18:00:00+0000";
-        const string dateTimeOffset2 = "2023-11-26T18:10:00+0000";
         const string expirationDateTimeOffset1 = "2023-11-26T18:00:00+0000";
         const string expirationDateTimeOffset2 = "2023-11-27T18:10:00+0000";
         const string clearDateTimeOffset = "2023-11-27T18:01:00+0000";
         const string retrievalDateTimeOffset = "2023-11-27T18:02:00+0000";
+        const string initialMessage = "example";
 
         _dateTimeServiceMock.SetupSequence(s => s.UtcNow)
-            .Returns(DateTimeOffset.Parse(dateTimeOffset1))
-            .Returns(DateTimeOffset.Parse(dateTimeOffset2))
             .Returns(DateTimeOffset.Parse(clearDateTimeOffset))
             .Returns(DateTimeOffset.Parse(retrievalDateTimeOffset));
         
-        _aiThreadChannelRepository.StoreThreadChannel(threadId1);
-        _aiThreadChannelRepository.StoreThreadChannel(threadId2);
+        var threadDto1 = new ThreadChannelDto
+        {
+            ThreadId = threadId1,
+            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset1),
+            InitialMessageContent = initialMessage
+        };
+        
+        var threadDto2 = new ThreadChannelDto
+        {
+            ThreadId = threadId2,
+            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset2),
+            InitialMessageContent = initialMessage
+        };
+        
+        _aiThreadChannelRepository.StoreThreadChannel(threadDto1);
+        _aiThreadChannelRepository.StoreThreadChannel(threadDto2);
         
         var exception = Record.Exception(() => _aiThreadChannelRepository.ClearExpiredThreadChannels());
         
         exception.Should().BeNull();
 
-        var existingThreadChannels = _aiThreadChannelRepository.GetStoredThreadChannels();
+        var existingThreadChannels = _aiThreadChannelRepository.GetStoredActiveThreadChannels();
 
         var threadChannelDtos = existingThreadChannels.ToList();
-        threadChannelDtos.Should().NotContainEquivalentOf(new ThreadChannelDto
-        {
-            ThreadId = threadId1,
-            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset1)
-        });
+        threadChannelDtos.Should().NotContain(threadDto1);
 
-        threadChannelDtos.Should().ContainEquivalentOf(new ThreadChannelDto
-        {
-            ThreadId = threadId2,
-            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset2)
-        });
+        threadChannelDtos.Should().Contain(threadDto2);
     }
     
     [Fact]
@@ -118,33 +130,36 @@ public sealed class AiThreadChannelRepositoryTests : IDisposable
     {
         const ulong threadId1 = 123;
         const ulong threadId2 = 124;
-        const string dateTimeOffset1 = "2023-11-25T18:00:00+0000";
-        const string dateTimeOffset2 = "2023-11-26T18:10:00+0000";
         const string expirationDateTimeOffset1 = "2023-11-26T18:00:00+0000";
         const string expirationDateTimeOffset2 = "2023-11-27T18:10:00+0000";
         const string retrievalDateTimeOffset = "2023-11-27T18:01:00+0000";
+        const string initialMessage = "example";
 
         _dateTimeServiceMock.SetupSequence(s => s.UtcNow)
-            .Returns(DateTimeOffset.Parse(dateTimeOffset1))
-            .Returns(DateTimeOffset.Parse(dateTimeOffset2))
             .Returns(DateTimeOffset.Parse(retrievalDateTimeOffset));
         
-        _aiThreadChannelRepository.StoreThreadChannel(threadId1);
-        _aiThreadChannelRepository.StoreThreadChannel(threadId2);
-        
-        var existingThreadChannels = _aiThreadChannelRepository.GetStoredThreadChannels();
-
-        var threadChannelDtos = existingThreadChannels.ToList();
-        threadChannelDtos.Should().NotContainEquivalentOf(new ThreadChannelDto
+        var threadDto1 = new ThreadChannelDto
         {
             ThreadId = threadId1,
-            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset1)
-        });
-
-        threadChannelDtos.Should().ContainEquivalentOf(new ThreadChannelDto
+            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset1),
+            InitialMessageContent = initialMessage
+        };
+        
+        var threadDto2 = new ThreadChannelDto
         {
             ThreadId = threadId2,
-            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset2)
-        });
+            Expiration = DateTimeOffset.Parse(expirationDateTimeOffset2),
+            InitialMessageContent = initialMessage
+        };
+        
+        _aiThreadChannelRepository.StoreThreadChannel(threadDto1);
+        _aiThreadChannelRepository.StoreThreadChannel(threadDto2);
+        
+        var existingThreadChannels = _aiThreadChannelRepository.GetStoredActiveThreadChannels();
+
+        var threadChannelDtos = existingThreadChannels.ToList();
+        threadChannelDtos.Should().NotContain(threadDto1);
+
+        threadChannelDtos.Should().Contain(threadDto2);
     }
 }
