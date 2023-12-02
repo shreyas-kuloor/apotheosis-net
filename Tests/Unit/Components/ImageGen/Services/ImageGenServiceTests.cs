@@ -3,7 +3,6 @@ using Apotheosis.Components.ImageGen.Interfaces;
 using Apotheosis.Components.ImageGen.Models;
 using Apotheosis.Components.ImageGen.Services;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Tests.Utils;
 
@@ -12,8 +11,7 @@ namespace Tests.Unit.Components.ImageGen.Services;
 public sealed class ImageGenServiceTests : IDisposable
 {
     private readonly Mock<IImageGenNetworkDriver> _imageGenNetworkDriverMock;
-    private readonly Mock<IOptions<ImageGenSettings>> _imageGenOptionsMock;
-    private readonly IImageGenService _imageGenService;
+    private readonly ImageGenService _imageGenService;
     
     private readonly ImageGenSettings _imageGenSettings = new()
     {
@@ -24,16 +22,13 @@ public sealed class ImageGenServiceTests : IDisposable
     public ImageGenServiceTests()
     {
         _imageGenNetworkDriverMock = new Mock<IImageGenNetworkDriver>(MockBehavior.Strict);
-        _imageGenOptionsMock = new Mock<IOptions<ImageGenSettings>>(MockBehavior.Strict);
-        _imageGenOptionsMock.Setup(o => o.Value).Returns(_imageGenSettings);
 
-        _imageGenService = new ImageGenService(_imageGenNetworkDriverMock.Object, _imageGenOptionsMock.Object);
+        _imageGenService = new ImageGenService(_imageGenNetworkDriverMock.Object, _imageGenSettings);
     }
 
     public void Dispose()
     {
         _imageGenNetworkDriverMock.VerifyAll();
-        _imageGenOptionsMock.VerifyAll();
     }
     
     [Fact]

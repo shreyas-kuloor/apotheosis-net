@@ -3,7 +3,6 @@ using System.Text;
 using Apotheosis.Components.GCPDot.Configuration;
 using Apotheosis.Components.GCPDot.Exceptions;
 using Apotheosis.Components.GCPDot.Interfaces;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Apotheosis.Components.GCPDot.Network;
@@ -22,10 +21,10 @@ public sealed class GcpDotNetworkDriver : IGcpDotNetworkDriver
     /// </summary>
     public const int Timeout = 10;
 
-    public GcpDotNetworkDriver(HttpClient httpClient, IOptions<GcpDotSettings> gcpDotOptions)
+    public GcpDotNetworkDriver(HttpClient httpClient, GcpDotSettings gcpDotSettings)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = gcpDotOptions.Value.BaseUrl;
+        _httpClient.BaseAddress = gcpDotSettings.BaseUrl;
     }
 
     public async Task<string> SendRequestAsync(string path, HttpMethod method, object? request)

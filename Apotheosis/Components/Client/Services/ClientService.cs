@@ -1,62 +1,40 @@
 using Apotheosis.Components.AiChat.Interfaces;
-using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.Client.Interfaces;
-using Discord;
-using Discord.WebSocket;
+using Apotheosis.Components.Logging.Interfaces;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using NetCord.Gateway;
 
 namespace Apotheosis.Components.Client.Services;
 
-public sealed class ClientService: IClientService
+public sealed class ClientService(
+    GatewayClient discordClient,
+    ILogService<ClientService> logger,
+    IInteractionHandler interactionHandler,
+    IAiChatThreadMessageHandler aiChatThreadMessageHandler)
+    : IClientService
 {
-    private readonly ClientSettings _clientSettings;
-    private readonly DiscordSocketClient _discordSocketClient;
-    private readonly ILogger<ClientService> _logger;
-    private readonly IInteractionHandler _interactionHandler;
-    private readonly IAiChatThreadMessageHandler _aiChatThreadMessageHandler;
-
-    public ClientService(
-        IOptions<ClientSettings> clientOptions, 
-        DiscordSocketClient discordSocketClient, 
-        ILogger<ClientService> logger,
-        IInteractionHandler interactionHandler,
-        IAiChatThreadMessageHandler aiChatThreadMessageHandler)
-    {
-        _clientSettings = clientOptions.Value;
-        _discordSocketClient = discordSocketClient;
-        _logger = logger;
-        _interactionHandler = interactionHandler;
-        _aiChatThreadMessageHandler = aiChatThreadMessageHandler;
-    }
-
     public async Task RunAsync()
     {
-        _discordSocketClient.Log += Log;
+        discordClient.Log += Log;
 
-        await _interactionHandler.InitializeAsync();
-
-        await _discordSocketClient.LoginAsync(TokenType.Bot, _clientSettings.BotToken);
-        await _discordSocketClient.StartAsync();
+        await discordClient.StartAsync();
         
-        _aiChatThreadMessageHandler.InitializeAsync();
+        await interactionHandler.InitializeAsync();
+        
+        aiChatThreadMessageHandler.InitializeAsync();
 
         await Task.Delay(Timeout.Infinite);
     }
 
-    private Task Log(LogMessage message)
+    private ValueTask Log(LogMessage message)
     {
         var logLevel = message.Severity switch
         {
-            LogSeverity.Critical => LogLevel.Critical,
             LogSeverity.Error => LogLevel.Error,
-            LogSeverity.Warning => LogLevel.Warning,
             LogSeverity.Info => LogLevel.Information,
-            LogSeverity.Verbose => LogLevel.Trace,
-            LogSeverity.Debug => LogLevel.Debug,
             _ => LogLevel.Information
         };
-        _logger.Log(logLevel, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
-        return Task.CompletedTask;
+        logger.Log(logLevel, message.Exception, message.Message);
+        return default;
     }
 }

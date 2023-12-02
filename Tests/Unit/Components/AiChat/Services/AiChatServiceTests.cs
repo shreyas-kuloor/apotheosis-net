@@ -3,7 +3,6 @@ using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
 using Apotheosis.Components.AiChat.Services;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Tests.Utils;
 
@@ -12,8 +11,7 @@ namespace Tests.Unit.Components.AiChat.Services;
 public sealed class AiChatServiceTests : IDisposable
 {
     private readonly Mock<IAiChatNetworkDriver> _aiChatNetworkDriverMock;
-    private readonly Mock<IOptions<AiChatSettings>> _aiChatOptionsMock;
-    private readonly IAiChatService _aiChatService;
+    private readonly AiChatService _aiChatService;
     
     private readonly AiChatSettings _aiChatSettings = new()
     {
@@ -24,20 +22,17 @@ public sealed class AiChatServiceTests : IDisposable
     public AiChatServiceTests()
     {
         _aiChatNetworkDriverMock = new Mock<IAiChatNetworkDriver>(MockBehavior.Strict);
-        _aiChatOptionsMock = new Mock<IOptions<AiChatSettings>>(MockBehavior.Strict);
-        _aiChatOptionsMock.Setup(o => o.Value).Returns(_aiChatSettings);
 
-        _aiChatService = new AiChatService(_aiChatNetworkDriverMock.Object, _aiChatOptionsMock.Object);
+        _aiChatService = new AiChatService(_aiChatNetworkDriverMock.Object, _aiChatSettings);
     }
 
     public void Dispose()
     {
         _aiChatNetworkDriverMock.VerifyAll();
-        _aiChatOptionsMock.VerifyAll();
     }
 
     [Fact]
-    public async Task InitializeThreadToAiAsync_CallsNetworkDriverAndReturnsResponseDtos_GivenInitialPrompt()
+    public async Task SendSingleMessageToAiAsync_CallsNetworkDriverAndReturnsResponseDtos_GivenInitialPrompt()
     {
         const string initialPrompt = "example prompt";
         const string responseMessageContent = "example response";
@@ -102,7 +97,7 @@ public sealed class AiChatServiceTests : IDisposable
                 Match.Create<AiChatRequest>(r => MatchUtils.MatchBasicObject(r, expectedRequest))))
             .ReturnsAsync(response);
 
-        var actual = await _aiChatService.InitializeThreadToAiAsync(initialPrompt);
+        var actual = await _aiChatService.SendSingleMessageToAiAsync(initialPrompt);
 
         actual.Should().BeEquivalentTo(expectedDtos);
     }

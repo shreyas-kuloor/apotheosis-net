@@ -3,84 +3,96 @@ using Apotheosis.Components.AiChat.Exceptions;
 using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
 using Apotheosis.Components.DateTime.Interfaces;
-using Discord;
-using Discord.Interactions;
-using Microsoft.Extensions.Options;
-using Color = Discord.Color;
+using NetCord;
+using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
+using Color = NetCord.Color;
 
 namespace Apotheosis.Components.AiChat.Modules;
 
-public sealed class ChatModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class ChatModule(
+    IAiChatService aiChatService,
+    IAiThreadChannelRepository aiThreadChannelRepository,
+    AiChatSettings aiChatSettings,
+    IDateTimeService dateTimeService)
+    : ApplicationCommandModule<SlashCommandContext>
 {
-    private readonly IAiChatService _aiChatService;
-    private readonly IAiThreadChannelRepository _aiThreadChannelRepository;
-    private readonly AiChatSettings _aiChatSettings;
-    private readonly IDateTimeService _dateTimeService;
-
-    public ChatModule(
-        IAiChatService aiChatService,
-        IAiThreadChannelRepository aiThreadChannelRepository,
-        IOptions<AiChatSettings> aiChatOptions,
-        IDateTimeService dateTimeService)
-    {
-        _aiChatService = aiChatService;
-        _aiThreadChannelRepository = aiThreadChannelRepository;
-        _aiChatSettings = aiChatOptions.Value;
-        _dateTimeService = dateTimeService;
-    }
-
     [SlashCommand("chat", "Chat with the bot.")]
     public async Task ChatAsync(string prompt)
     {
-        if (Context.Channel is IThreadChannel)
+        if (Context.Channel is GuildThread)
         {
-            await RespondAsync("This command is not usable in threads. Please call it again in a main channel!");
+            await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
+            {
+                Content = "This command is not usable in threads. Please call it again in a main channel!",
+                Flags = MessageFlags.Ephemeral
+            }));
             return;
         }
-        
-        await DeferAsync();
+
+        await RespondAsync(InteractionCallback.DeferredMessage());
 
         IEnumerable<AiChatMessageDto> response;
         try
         {
-            response = await _aiChatService.InitializeThreadToAiAsync(prompt);
+            response = await aiChatService.SendSingleMessageToAiAsync(prompt);
         }
         catch (AiChatNetworkException e)
         {
             if (e.Reason == AiChatNetworkException.ErrorReason.TokenQuotaReached)
             {
-                await FollowupAsync("The ChatGPT token quota has been reached. Please ask an admin to check their usage limits or billing details.");
+                await FollowupAsync(new InteractionMessageProperties
+                {
+                    Content = "The ChatGPT token quota has been reached. Please ask an admin to check their usage limits or billing details.",
+                    Flags = MessageFlags.Ephemeral
+                });
                 return;
             }
 
-            await FollowupAsync("Sorry, an error occurred while trying to reach ChatGPT. Please try again later or contact an admin.");
+            await FollowupAsync(new InteractionMessageProperties
+            {
+                Content = "Sorry, an error occurred while trying to reach ChatGPT. Please try again later or contact an admin.",
+                Flags = MessageFlags.Ephemeral
+            });
             return;
         }
         
-        var textChannel = (Context.Channel as ITextChannel)!;
-        var embed = new EmbedBuilder
+        var textChannel = Context.Channel;
+        var embed = new EmbedProperties
         {
-            Author = new EmbedAuthorBuilder().WithName(Context.User.GlobalName).WithIconUrl(Context.User.GetAvatarUrl()),
+            Author = new EmbedAuthorProperties
+            {
+                Name = Context.User.GlobalName,
+                IconUrl = Context.User.GetAvatarUrl().ToString()
+            },
             Description = prompt,
-            Color = Color.Gold
-        }.Build();
+            Color = new Color(255, 128, 0),
+        };
         
-        await FollowupAsync(embed: embed);
-        var initialMessage = (await Context.Interaction.GetOriginalResponseAsync() as IMessage)!;
+        var embedFollowupMessage = await FollowupAsync(new InteractionMessageProperties
+        {
+            Embeds = new List<EmbedProperties>
+            {
+                embed
+            }
+        });
 
-        var thread = await textChannel.CreateThreadAsync(
-            $"Chatting with {Context.User.GlobalName}",
-            ThreadType.PublicThread,
-            ThreadArchiveDuration.OneDay,
-            initialMessage);
+        var thread = await Context.Client.Rest.CreateGuildThreadAsync(
+            textChannel.Id,
+            embedFollowupMessage.Id,
+            new GuildThreadProperties($"Chatting with {Context.User.GlobalName}")
+            {
+                AutoArchiveDuration = 1440,
+                ChannelType = ChannelType.PublicGuildThread
+            });
 
-        _aiThreadChannelRepository.ClearExpiredThreadChannels();
+        aiThreadChannelRepository.ClearExpiredThreadChannels();
         
-        _aiThreadChannelRepository.StoreThreadChannel(
+        aiThreadChannelRepository.StoreThreadChannel(
             new ThreadChannelDto
             {
                 ThreadId = thread.Id, 
-                Expiration = _dateTimeService.UtcNow.AddMinutes(_aiChatSettings.ThreadExpirationMinutes),
+                Expiration = dateTimeService.UtcNow.AddMinutes(aiChatSettings.ThreadExpirationMinutes),
                 InitialMessageContent = prompt
             });
 
@@ -88,7 +100,10 @@ public sealed class ChatModule : InteractionModuleBase<SocketInteractionContext>
         
         for (var index = 0; index < aiChatMessageDtos.Count; index++)
         {
-            await thread.SendMessageAsync(aiChatMessageDtos.FirstOrDefault(r => r.Index == index)!.Content);
+            await thread.SendMessageAsync(new MessageProperties
+            {
+                Content = aiChatMessageDtos.FirstOrDefault(r => r.Index == index)!.Content
+            });
         }
         
     }

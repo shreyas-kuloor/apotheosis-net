@@ -3,10 +3,8 @@ using System.Net.Mime;
 using System.Text;
 using Apotheosis.Components.TextToSpeech.Configuration;
 using Apotheosis.Components.TextToSpeech.Exceptions;
-using Apotheosis.Components.TextToSpeech.Interfaces;
 using Apotheosis.Components.TextToSpeech.Network;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -14,14 +12,13 @@ using Tests.Utils;
 
 namespace Tests.Unit.Components.TextToSpeech.Network;
 
-public sealed class ElevenLabsNetworkDriverTests : IDisposable
+public sealed class ElevenLabsNetworkDriverTests
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
     
-    private readonly Mock<IOptions<TextToSpeechSettings>> _textToSpeechOptionsMock;
     private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly ITextToSpeechNetworkDriver _elevenLabsNetworkDriver;
+    private readonly ElevenLabsNetworkDriver _elevenLabsNetworkDriver;
     
     private readonly TextToSpeechSettings _textToSpeechSettings = new()
     {
@@ -31,18 +28,10 @@ public sealed class ElevenLabsNetworkDriverTests : IDisposable
 
     public ElevenLabsNetworkDriverTests()
     {
-        _textToSpeechOptionsMock = new Mock<IOptions<TextToSpeechSettings>>(MockBehavior.Strict);
-        _textToSpeechOptionsMock.Setup(o => o.Value).Returns(_textToSpeechSettings);
-        
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _elevenLabsNetworkDriver = new ElevenLabsNetworkDriver(httpClient, _textToSpeechOptionsMock.Object);
-    }
-
-    public void Dispose()
-    {
-        _textToSpeechOptionsMock.VerifyAll();
+        _elevenLabsNetworkDriver = new ElevenLabsNetworkDriver(httpClient, _textToSpeechSettings);
     }
 
     [Fact]

@@ -9,7 +9,7 @@ namespace Tests.Unit.Components.GcpDot.Services;
 public sealed class GcpDotServiceTests : IDisposable
 {
     private readonly Mock<IGcpDotNetworkDriver> _gcpDotNetworkDriverMock;
-    private readonly IGcpDotService _gcpDotService;
+    private readonly GcpDotService _gcpDotService;
 
     public static readonly TheoryData<string, string, string> TestData = new()
     {

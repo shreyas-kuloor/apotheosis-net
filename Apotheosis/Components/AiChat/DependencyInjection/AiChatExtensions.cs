@@ -2,9 +2,9 @@
 using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Network;
 using Apotheosis.Components.AiChat.Services;
+using Apotheosis.Components.Logging.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -13,7 +13,7 @@ namespace Apotheosis.Components.AiChat.DependencyInjection;
 public static class AiChatExtensions
 {
     /// <summary>
-    /// Adds client related services.
+    /// Adds AI chat related services.
     /// </summary>
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
     /// <param name="aiChatSection">An instance of <see cref="IConfigurationSection"/>.</param>
@@ -21,7 +21,8 @@ public static class AiChatExtensions
         this IServiceCollection services,
         IConfigurationSection aiChatSection)
     {
-        services.Configure<AiChatSettings>(aiChatSection);
+        var aiChatSettings = aiChatSection.Get<AiChatSettings>()!;
+        services.AddSingleton(aiChatSettings);
         AddHttpClient<IAiChatNetworkDriver, OpenAiNetworkDriver>(services);
         services.AddSingleton<IAiThreadChannelRepository, AiThreadChannelRepository>();
         services.AddScoped<IAiChatService, AiChatService>();
@@ -40,8 +41,8 @@ public static class AiChatExtensions
                     OpenAiNetworkDriver.Retries,
                     (result, _) =>
                     {
-                        var logger = handlerServices.GetService<ILogger<OpenAiNetworkDriver>>();
-                        logger?.LogError(result.Exception, "[{Source}] {Message}", nameof(OpenAiNetworkDriver), result.Result?.ToString());
+                        var logger = handlerServices.GetService<ILogService<OpenAiNetworkDriver>>();
+                        logger?.LogError(result.Exception, result.Result?.ToString());
                     }))
             .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(OpenAiNetworkDriver.Timeout));
     }

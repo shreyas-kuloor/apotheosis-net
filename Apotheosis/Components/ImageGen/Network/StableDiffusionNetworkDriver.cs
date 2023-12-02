@@ -3,7 +3,6 @@ using System.Text;
 using Apotheosis.Components.ImageGen.Configuration;
 using Apotheosis.Components.ImageGen.Exceptions;
 using Apotheosis.Components.ImageGen.Interfaces;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Apotheosis.Components.ImageGen.Network;
@@ -22,10 +21,9 @@ public sealed class StableDiffusionNetworkDriver : IImageGenNetworkDriver
     /// </summary>
     public const int Timeout = 10;
     
-    public StableDiffusionNetworkDriver(HttpClient httpClient, IOptions<ImageGenSettings> imageGenOptions)
+    public StableDiffusionNetworkDriver(HttpClient httpClient, ImageGenSettings imageGenSettings)
     {
         _httpClient = httpClient;
-        var imageGenSettings = imageGenOptions.Value;
         _httpClient.BaseAddress = imageGenSettings.StableDiffusionBaseUrl;
     }
     

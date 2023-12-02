@@ -3,10 +3,8 @@ using System.Net.Mime;
 using System.Text;
 using Apotheosis.Components.ImageGen.Configuration;
 using Apotheosis.Components.ImageGen.Exceptions;
-using Apotheosis.Components.ImageGen.Interfaces;
 using Apotheosis.Components.ImageGen.Network;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -14,14 +12,13 @@ using Tests.Utils;
 
 namespace Tests.Unit.Components.ImageGen.Network;
 
-public sealed class StableDiffusionNetworkDriverTests : IDisposable
+public sealed class StableDiffusionNetworkDriverTests
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
     
-    private readonly Mock<IOptions<ImageGenSettings>> _imageGenOptionsMock;
     private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly IImageGenNetworkDriver _imageGenNetworkDriver;
+    private readonly StableDiffusionNetworkDriver _imageGenNetworkDriver;
     
     private readonly ImageGenSettings _imageGenSettings = new()
     {
@@ -31,20 +28,12 @@ public sealed class StableDiffusionNetworkDriverTests : IDisposable
 
     public StableDiffusionNetworkDriverTests()
     {
-        _imageGenOptionsMock = new Mock<IOptions<ImageGenSettings>>(MockBehavior.Strict);
-        _imageGenOptionsMock.Setup(o => o.Value).Returns(_imageGenSettings);
-        
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, _imageGenOptionsMock.Object);
+        _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, _imageGenSettings);
     }
 
-    public void Dispose()
-    {
-        _imageGenOptionsMock.VerifyAll();
-    }
-    
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNullBody()
     {

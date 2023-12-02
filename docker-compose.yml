@@ -1,3 +1,8 @@
-﻿services:
+﻿version: "3.8"
+
+services:
   client:
-    build: Apotheosis/
+    build:
+      context: Apotheosis/
+      args:
+        - BUILD_CONFIGURATION=Release

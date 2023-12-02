@@ -1,11 +1,9 @@
-using Apotheosis.Components.Client.Configuration;
 using Apotheosis.Components.Client.Interfaces;
 using Apotheosis.Components.Client.Services;
-using Discord;
-using Discord.Interactions;
-using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Services.ApplicationCommands;
 
 namespace Apotheosis.Components.Client.DependencyInjection;
 
@@ -15,15 +13,15 @@ public static class ClientServicesExtensions
     /// Adds client related services.
     /// </summary>
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
-    /// <param name="clientSection">An instance of <see cref="IConfigurationSection"/>.</param>
-    public static void AddClientServices(this IServiceCollection services, IConfigurationSection clientSection)
+    /// <param name="botToken">The discord bot token.</param>
+    public static void AddClientServices(this IServiceCollection services, string botToken)
     {
+        services.AddSingleton<GatewayClient>(_ =>
+            new GatewayClient(
+                new Token(TokenType.Bot, botToken), 
+                new GatewayClientConfiguration { Intents = GatewayIntents.AllNonPrivileged | GatewayIntents.MessageContent }));
         services.AddSingleton<IClientService, ClientService>();
-        services.Configure<ClientSettings>(clientSection);
-        services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig { GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent }));
-        services.AddSingleton(
-            x => new InteractionService(
-                x.GetRequiredService<DiscordSocketClient>()));
+        services.AddSingleton(_ => new ApplicationCommandService<SlashCommandContext>());
         services.AddSingleton<IInteractionHandler, InteractionHandler>();
     }
 }

@@ -5,7 +5,6 @@ using System.Text;
 using Apotheosis.Components.AiChat.Configuration;
 using Apotheosis.Components.AiChat.Exceptions;
 using Apotheosis.Components.AiChat.Interfaces;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Apotheosis.Components.AiChat.Network;
@@ -25,10 +24,10 @@ public sealed class OpenAiNetworkDriver : IAiChatNetworkDriver
     /// </summary>
     public const int Timeout = 10;
     
-    public OpenAiNetworkDriver(HttpClient httpClient, IOptions<AiChatSettings> aiChatOptions)
+    public OpenAiNetworkDriver(HttpClient httpClient, AiChatSettings aiChatSettings)
     {
         _httpClient = httpClient;
-        _aiChatSettings = aiChatOptions.Value;
+        _aiChatSettings = aiChatSettings;
         _httpClient.BaseAddress = _aiChatSettings.OpenAiBaseUrl;
     }
     

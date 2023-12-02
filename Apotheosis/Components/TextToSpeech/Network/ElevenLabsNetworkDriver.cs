@@ -3,7 +3,6 @@ using System.Text;
 using Apotheosis.Components.TextToSpeech.Configuration;
 using Apotheosis.Components.TextToSpeech.Exceptions;
 using Apotheosis.Components.TextToSpeech.Interfaces;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Apotheosis.Components.TextToSpeech.Network;
@@ -23,10 +22,10 @@ public sealed class ElevenLabsNetworkDriver : ITextToSpeechNetworkDriver
     /// </summary>
     public const int Timeout = 10;
     
-    public ElevenLabsNetworkDriver(HttpClient httpClient, IOptions<TextToSpeechSettings> textToSpeechOptions)
+    public ElevenLabsNetworkDriver(HttpClient httpClient, TextToSpeechSettings textToSpeechSettings)
     {
         _httpClient = httpClient;
-        _textToSpeechSettings = textToSpeechOptions.Value;
+        _textToSpeechSettings = textToSpeechSettings;
         _httpClient.BaseAddress = _textToSpeechSettings.ElevenLabsBaseUrl;
     }
     

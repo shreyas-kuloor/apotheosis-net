@@ -3,10 +3,8 @@ using System.Net.Mime;
 using System.Text;
 using Apotheosis.Components.GCPDot.Configuration;
 using Apotheosis.Components.GCPDot.Exceptions;
-using Apotheosis.Components.GCPDot.Interfaces;
 using Apotheosis.Components.GCPDot.Network;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -14,15 +12,14 @@ using Tests.Utils;
 
 namespace Tests.Unit.Components.GcpDot.Network;
 
-public sealed class GcpDotNetworkDriverTests : IDisposable
+public sealed class GcpDotNetworkDriverTests
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
     
     
-    private readonly Mock<IOptions<GcpDotSettings>> _gcpDotOptionsMock;
     private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly IGcpDotNetworkDriver _gcpDotNetworkDriver;
+    private readonly GcpDotNetworkDriver _gcpDotNetworkDriver;
     
     private readonly GcpDotSettings _gcpDotSettings = new()
     {
@@ -31,20 +28,12 @@ public sealed class GcpDotNetworkDriverTests : IDisposable
 
     public GcpDotNetworkDriverTests()
     {
-        _gcpDotOptionsMock = new Mock<IOptions<GcpDotSettings>>(MockBehavior.Strict);
-        _gcpDotOptionsMock.Setup(o => o.Value).Returns(_gcpDotSettings);
-        
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _gcpDotNetworkDriver = new GcpDotNetworkDriver(httpClient, _gcpDotOptionsMock.Object);
+        _gcpDotNetworkDriver = new GcpDotNetworkDriver(httpClient, _gcpDotSettings);
     }
-
-    public void Dispose()
-    {
-        _gcpDotOptionsMock.VerifyAll();
-    }
-
+    
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNullBody()
     {

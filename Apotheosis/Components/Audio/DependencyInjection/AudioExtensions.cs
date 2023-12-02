@@ -12,6 +12,7 @@ public static class AudioExtensions
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
     public static void AddAudioServices(this IServiceCollection services)
     {
-        services.AddScoped<IAudioService, AudioService>();
+        services.AddScoped<IAudioStreamService, AudioStreamService>();
+        services.AddSingleton<IVoiceClientService, VoiceClientService>();
     }
 }

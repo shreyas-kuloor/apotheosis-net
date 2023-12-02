@@ -3,10 +3,8 @@ using System.Net.Mime;
 using System.Text;
 using Apotheosis.Components.AiChat.Configuration;
 using Apotheosis.Components.AiChat.Exceptions;
-using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Network;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -14,14 +12,13 @@ using Tests.Utils;
 
 namespace Tests.Unit.Components.AiChat.Network;
 
-public sealed class OpenAiNetworkDriverTests : IDisposable
+public sealed class OpenAiNetworkDriverTests
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
-    
-    private readonly Mock<IOptions<AiChatSettings>> _aiChatOptionsMock;
+
     private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly IAiChatNetworkDriver _aiChatNetworkDriver;
+    private readonly OpenAiNetworkDriver _aiChatNetworkDriver;
     
     private readonly AiChatSettings _aiChatSettings = new()
     {
@@ -31,18 +28,10 @@ public sealed class OpenAiNetworkDriverTests : IDisposable
 
     public OpenAiNetworkDriverTests()
     {
-        _aiChatOptionsMock = new Mock<IOptions<AiChatSettings>>(MockBehavior.Strict);
-        _aiChatOptionsMock.Setup(o => o.Value).Returns(_aiChatSettings);
-        
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _aiChatNetworkDriver = new OpenAiNetworkDriver(httpClient, _aiChatOptionsMock.Object);
-    }
-
-    public void Dispose()
-    {
-        _aiChatOptionsMock.VerifyAll();
+        _aiChatNetworkDriver = new OpenAiNetworkDriver(httpClient, _aiChatSettings);
     }
     
     [Fact]

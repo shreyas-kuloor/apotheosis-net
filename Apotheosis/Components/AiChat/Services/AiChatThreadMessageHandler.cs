@@ -1,59 +1,53 @@
 ﻿using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
-using Discord;
-using Discord.WebSocket;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Rest;
 
 namespace Apotheosis.Components.AiChat.Services;
 
-public sealed class AiChatThreadMessageHandler : IAiChatThreadMessageHandler
+public sealed class AiChatThreadMessageHandler(
+    GatewayClient discordClient,
+    IAiChatService aiChatService,
+    IAiThreadChannelRepository aiThreadChannelRepository)
+    : IAiChatThreadMessageHandler
 {
-    private readonly DiscordSocketClient _discordSocketClient;
-    private readonly IAiChatService _aiChatService;
-    private readonly IAiThreadChannelRepository _aiThreadChannelRepository;
-
-    public AiChatThreadMessageHandler(
-        DiscordSocketClient discordSocketClient,
-        IAiChatService aiChatService,
-        IAiThreadChannelRepository aiThreadChannelRepository)
-    {
-        _discordSocketClient = discordSocketClient;
-        _aiChatService = aiChatService;
-        _aiThreadChannelRepository = aiThreadChannelRepository;
-    }
-
     public void InitializeAsync()
     {
-        _discordSocketClient.MessageReceived += MessageReceivedAsync;
+        discordClient.MessageCreate += MessageReceivedAsync;
     }
 
-    private async Task MessageReceivedAsync(SocketMessage message)
+    private async ValueTask MessageReceivedAsync(Message message)
     {
-        if (message.Channel is IThreadChannel thread && !message.Author.IsBot)
+        if (message is { Channel: GuildThread thread, Author.IsBot: false })
         {
-            var activeThreads = _aiThreadChannelRepository.GetStoredActiveThreadChannels();
+            var activeThreads = aiThreadChannelRepository.GetStoredActiveThreadChannels();
 
             var activeThread = activeThreads.FirstOrDefault(t => t.ThreadId == thread.Id);
             if (activeThread != null)
             {
-                var threadMessages = await thread.GetMessagesAsync(limit: 50).FlattenAsync();
+                var threadMessages = await thread.GetMessagesAsync().ToListAsync();
 
                 // Convert IMessage to ThreadMessageDto, but ensure the first message, which is always an embed, is read in as a user message.
                 var threadContents = threadMessages
                     .OrderBy(m => m.Id)
                     .Where(m => m.Interaction is null)
-                    .Select((m, index) => new ThreadMessageDto
+                    .Select((m, index) => new MessageDto
                     {
                         Content = index == 0 ? activeThread.InitialMessageContent : m.Content,
                         IsBot = index != 0 && m.Author.IsBot
                     });
 
-                var response = await _aiChatService.SendThreadToAiAsync(threadContents);
+                var response = await aiChatService.SendMultipleMessagesToAiAsync(threadContents);
                 
                 var aiChatMessageDtos = response.ToList();
         
                 for (var index = 0; index < aiChatMessageDtos.Count; index++)
                 {
-                    await thread.SendMessageAsync(aiChatMessageDtos.FirstOrDefault(r => r.Index == index)!.Content);
+                    await thread.SendMessageAsync(new MessageProperties
+                    {
+                        Content = aiChatMessageDtos.FirstOrDefault(r => r.Index == index)!.Content
+                    });
                 }
             }
         }

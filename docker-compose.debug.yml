@@ -1,0 +1,13 @@
+﻿version: "3.8"
+
+services:
+  client:
+    build:
+      context: Apotheosis/
+      args:
+        - BUILD_CONFIGURATION=Debug
+    ports:
+      - "5000:5000"  # Expose the port used by Kestrel
+      - "5001:5001"  # If using HTTPS
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

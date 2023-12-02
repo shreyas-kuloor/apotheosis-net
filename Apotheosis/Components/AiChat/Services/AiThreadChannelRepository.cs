@@ -6,15 +6,9 @@ using Apotheosis.Components.DateTime.Interfaces;
 
 namespace Apotheosis.Components.AiChat.Services;
 
-public sealed class AiThreadChannelRepository : IAiThreadChannelRepository
+public sealed class AiThreadChannelRepository(IDateTimeService dateTimeService) : IAiThreadChannelRepository
 {
     private readonly ConcurrentDictionary<ulong, ThreadChannelDto> _aiThreadChannelDictionary = new();
-    private readonly IDateTimeService _dateTimeService;
-
-    public AiThreadChannelRepository(IDateTimeService dateTimeService)
-    {
-        _dateTimeService = dateTimeService;
-    }
 
     public void StoreThreadChannel(ThreadChannelDto threadChannelDto)
     {
@@ -28,7 +22,7 @@ public sealed class AiThreadChannelRepository : IAiThreadChannelRepository
 
     public void ClearExpiredThreadChannels()
     {
-        var nowDateTimeOffset = _dateTimeService.UtcNow;
+        var nowDateTimeOffset = dateTimeService.UtcNow;
         var expiredThreadChannels = _aiThreadChannelDictionary.Where(tc => tc.Value.Expiration < nowDateTimeOffset);
 
         var successes = expiredThreadChannels.Select(tc => _aiThreadChannelDictionary.TryRemove(tc));
@@ -41,7 +35,7 @@ public sealed class AiThreadChannelRepository : IAiThreadChannelRepository
 
     public IEnumerable<ThreadChannelDto> GetStoredActiveThreadChannels()
     {
-        var nowDateTimeOffset = _dateTimeService.UtcNow;
+        var nowDateTimeOffset = dateTimeService.UtcNow;
         var storedThreadChannels = _aiThreadChannelDictionary
             .Where(tc => tc.Value.Expiration >= nowDateTimeOffset)
             .Select(tc => tc.Value);

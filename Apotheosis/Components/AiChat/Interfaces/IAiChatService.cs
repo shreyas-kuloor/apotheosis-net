@@ -4,7 +4,7 @@ namespace Apotheosis.Components.AiChat.Interfaces;
 
 public interface IAiChatService
 {
-    Task<IEnumerable<AiChatMessageDto>> InitializeThreadToAiAsync(string initialPrompt);
+    Task<IEnumerable<AiChatMessageDto>> SendSingleMessageToAiAsync(string prompt, string? systemMessage = null);
     
-    Task<IEnumerable<AiChatMessageDto>> SendThreadToAiAsync(IEnumerable<ThreadMessageDto> threadMessages);
+    Task<IEnumerable<AiChatMessageDto>> SendMultipleMessagesToAiAsync(IEnumerable<MessageDto> messages);
 }

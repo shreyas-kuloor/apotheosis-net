@@ -3,13 +3,11 @@ using Apotheosis.Components.Audio.Interfaces;
 
 namespace Apotheosis.Components.Audio.Services;
 
-public sealed class AudioService : IAudioService
+public sealed class AudioStreamService : IAudioStreamService
 { 
-    public async Task<Process> CreateStreamProcessAsync(Stream pcmStream)
+    public Process? CreateStreamProcessAsync()
     {
-        var process = new Process
-        {
-            StartInfo = new ProcessStartInfo
+        return Process.Start(new ProcessStartInfo
             {
                 FileName = "ffmpeg",
                 Arguments = "-hide_banner -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1",
@@ -17,14 +15,6 @@ public sealed class AudioService : IAudioService
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
             }
-        };
-
-        process.Start();
-        
-        await pcmStream.CopyToAsync(process.StandardInput.BaseStream);
-        
-        process.StandardInput.Close();
-
-        return process;
+        );
     }
 }

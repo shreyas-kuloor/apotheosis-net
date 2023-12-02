@@ -1,81 +1,125 @@
 ﻿using Apotheosis.Components.Audio.Interfaces;
 using Apotheosis.Components.TextToSpeech.Interfaces;
-using Discord;
-using Discord.Audio;
-using Discord.Interactions;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Gateway.Voice;
+using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
 
 namespace Apotheosis.Components.TextToSpeech.Modules;
 
-public sealed class SpeakModule : InteractionModuleBase<SocketInteractionContext>
+public sealed class SpeakModule(
+    IAudioStreamService audioStreamService,
+    ITextToSpeechService textToSpeechService,
+    IVoiceClientService voiceClientService)
+    : ApplicationCommandModule<SlashCommandContext>
 {
-    private readonly IAudioService _audioService;
-    private readonly ITextToSpeechService _textToSpeechService;
-
-    public SpeakModule(
-        IAudioService audioService,
-        ITextToSpeechService textToSpeechService)
-    {
-        _audioService = audioService;
-        _textToSpeechService = textToSpeechService;
-    }
-
     [SlashCommand("speak", "Invite the bot to speak a prompt using a voice of your choice.")]
-    public async Task SpeakAsync(string voiceName, string prompt)
+    public async Task SpeakAsync([SlashCommandParameter(Name = "voice_name")]string voiceName, string prompt)
     {
-        if (Context.Guild.CurrentUser.IsStreaming)
-        {
-            await RespondAsync("I'm currently speaking in a voice channel, please try again after I'm done!", ephemeral: true);
-        }
-        
-        var voices = await _textToSpeechService.GetVoicesAsync();
+        var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;
 
         if (string.IsNullOrWhiteSpace(voiceId))
         {
-            await RespondAsync(
-                $"{voiceName} is not valid. Please try again with a valid voice name. A list of voices can be retrieved with the /voices command", ephemeral: true);
-        }
-        
-        var voiceChannel = (Context.User as IVoiceState)?.VoiceChannel;
-        await DeferAsync(ephemeral: true);
-        var voiceMp3Stream = await _textToSpeechService.GenerateSpeechFromPromptAsync(prompt, voiceId!);
-
-        if (voiceChannel == null)
-        {
-            await FollowupAsync(
-                $"Generated speech with prompt \"{prompt}\" using voice \"{voiceName}\"",
-                ephemeral: true);
-            await Context.Interaction.FollowupWithFileAsync(
-                voiceMp3Stream, 
-                $"{voiceName}_speech.mp3",
-                ephemeral: false);
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties
+                {
+                    Content = $"{voiceName} is not valid. Please try again with a valid voice name. A list of voices can be retrieved with the /voices command",
+                    Flags = MessageFlags.Ephemeral
+                }));
             return;
         }
-
         
-        var audioClient = await voiceChannel.ConnectAsync();
-        using var ffmpeg = await _audioService.CreateStreamProcessAsync(voiceMp3Stream);
-        await using var stream = audioClient.CreatePCMStream(AudioApplication.Music);
-        try
+        var client = Context.Client;
+        var guild = Context.Guild!;
+
+        await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
+        var voiceStream = await textToSpeechService.GenerateSpeechFromPromptAsync(prompt, voiceId);
+        if (!guild.VoiceStates.TryGetValue(Context.User.Id, out var userVoiceState))
         {
-            await ffmpeg.StandardOutput.BaseStream.CopyToAsync(stream);
+            await FollowupAsync(new InteractionMessageProperties
+            {
+                Content = $"Generated speech with prompt \"{prompt}\" using voice \"{voiceName}\"",
+                Flags = MessageFlags.Ephemeral
+            });
+            await FollowupAsync(new InteractionMessageProperties
+            {
+                Attachments = new List<AttachmentProperties>
+                {
+                    new($"{voiceName}_speech.mp3", voiceStream)
+                }
+            });
+            return;
         }
-        finally
+        
+        var currentUser = await client.Rest.GetCurrentUserAsync();
+        var voiceChannelId = userVoiceState.ChannelId.GetValueOrDefault();
+        if (guild.VoiceStates.TryGetValue(currentUser.Id, out var botVoiceState))
         {
-            await stream.FlushAsync();
-            await voiceChannel.DisconnectAsync();
-            await FollowupAsync(
-                $"Generated speech with prompt \"{prompt}\" using voice \"{voiceName}\"", 
-                ephemeral: true);
+            var botVoiceChannelId = botVoiceState.ChannelId.GetValueOrDefault();
+            if (voiceChannelId != botVoiceChannelId)
+            {
+                await FollowupAsync(new InteractionMessageProperties
+                {
+                    Content = "I'm currently in another voice channel right now. Please wait until I'm done to invite me to speak.",
+                    Flags = MessageFlags.Ephemeral
+                });
+                return;
+            }
+        }
+        
+        if (!voiceClientService.TryGetVoiceClient(voiceChannelId, out var voiceClient))
+        {
+            voiceClient = await client.JoinVoiceChannelAsync(
+                client.ApplicationId,
+                guild.Id,
+                voiceChannelId);
+            
+            voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
+            
+            await voiceClient.StartAsync();
+        }
+
+        await voiceClient!.ReadyAsync;
+            
+        await voiceClient.EnterSpeakingStateAsync(SpeakingFlags.Microphone);
+            
+        await FollowupAsync(new InteractionMessageProperties
+        {
+            Content = $"Playing speech with prompt \"{prompt}\" using voice \"{voiceName}\"",
+            Flags = MessageFlags.Ephemeral
+        });
+
+        await using var outStream = voiceClient.CreateOutputStream();
+        using var ffmpeg = audioStreamService.CreateStreamProcessAsync()!;
+        await using var input = ffmpeg.StandardInput.BaseStream;
+        await using var output = ffmpeg.StandardOutput.BaseStream;
+        await using var opusStream = new OpusEncodeStream(outStream, PcmFormat.Short, VoiceChannels.Stereo, OpusApplication.Audio);
+        
+        await voiceStream.CopyToAsync(input);
+        ffmpeg.StandardInput.Close();
+        await output.CopyToAsync(opusStream);
+        await opusStream.FlushAsync();
+        
+        if (voiceClientService.TryRemoveVoiceClient(voiceChannelId, out var removedVoiceClient))
+        {
+            await removedVoiceClient!.CloseAsync();
+            await client.UpdateVoiceStateAsync(new VoiceStateProperties(guild.Id, null));
+            removedVoiceClient.Dispose();
         }
     }
     
-    [SlashCommand("voices", "Get the list of all supported voices for the /speak command.")]
+    [SlashCommand("voices", "Get the list of all supported voices for the /speak and /converse commands.")]
     public async Task GetVoicesAsync()
     {
-        var voices = await _textToSpeechService.GetVoicesAsync();
+        var voices = await textToSpeechService.GetVoicesAsync();
 
         var voicesString = $"**Available Voices:** {string.Join(", ", voices.Select(v => v.VoiceName))}";
-        await Context.Interaction.RespondAsync(voicesString, ephemeral: true);
+        await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
+        {
+            Content = voicesString,
+            Flags = MessageFlags.Ephemeral
+        }));
     }
 }

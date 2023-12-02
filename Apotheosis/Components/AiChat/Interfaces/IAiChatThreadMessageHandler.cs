@@ -1,6 +1,4 @@
-﻿using Discord.WebSocket;
-
-namespace Apotheosis.Components.AiChat.Interfaces;
+﻿namespace Apotheosis.Components.AiChat.Interfaces;
 
 public interface IAiChatThreadMessageHandler
 {

@@ -1,114 +1,40 @@
 ﻿using System.Reflection;
 using Apotheosis.Components.Client.Interfaces;
-using Discord;
-using Discord.Interactions;
-using Discord.Net;
-using Discord.WebSocket;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using NetCord;
+using NetCord.Gateway;
+using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
 
 namespace Apotheosis.Components.Client.Services;
 
-public sealed class InteractionHandler : IInteractionHandler
+public sealed class InteractionHandler(
+    GatewayClient discordClient,
+    IServiceProvider provider)
+    : IInteractionHandler
 {
-    private readonly DiscordSocketClient _discordSocketClient;
-    private readonly InteractionService _interactionService;
-    private readonly ILogger<InteractionHandler> _logger;
-    private readonly IServiceProvider _services;
-    
-    public InteractionHandler(
-        DiscordSocketClient discordSocketClient,
-        InteractionService interactionService,
-        ILogger<InteractionHandler> logger,
-        IServiceProvider serviceProvider)
-    {
-        _discordSocketClient = discordSocketClient;
-        _interactionService = interactionService;
-        _logger = logger;
-        _services = serviceProvider;
-    }
+    private readonly ApplicationCommandService<SlashCommandContext> _applicationCommandService = new();
     
     public async Task InitializeAsync()
     {
-        _discordSocketClient.Ready += ReadyAsync;
-        _interactionService.Log += Log;
+        _applicationCommandService.AddModules(Assembly.GetEntryAssembly()!);
+        await discordClient.ReadyAsync;
+        await _applicationCommandService.CreateCommandsAsync(discordClient.Rest, discordClient.ApplicationId);
 
-        await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-
-        _discordSocketClient.InteractionCreated += HandleInteractionAsync;
+        discordClient.InteractionCreate += HandleInteractionAsync;
     }
 
-    private async Task ReadyAsync()
+    private async ValueTask HandleInteractionAsync(Interaction interaction)
     {
-        try
+        if (interaction is SlashCommandInteraction slashCommandInteraction)
         {
-            await _interactionService.RegisterCommandsGloballyAsync();
+            try
+            {
+                await _applicationCommandService.ExecuteAsync(new SlashCommandContext(slashCommandInteraction, discordClient), provider);
+            }
+            catch (Exception ex)
+            {
+                await interaction.SendResponseAsync(InteractionCallback.Message($"Error: {ex.Message}"));
+            }
         }
-        catch (HttpException exception)
-        {
-            var json = JsonConvert.SerializeObject(exception.Errors, Formatting.Indented);
-            _logger.LogError( "{Message}", json);
-        }
-    }
-
-    private async Task HandleInteractionAsync(SocketInteraction interaction)
-    {
-        try
-        {
-            var context = new SocketInteractionContext(_discordSocketClient, interaction);
-            
-            var result = await _interactionService.ExecuteCommandAsync(context, _services);
-
-            if (!result.IsSuccess)
-                switch (result.Error)
-                {
-                    case InteractionCommandError.UnmetPrecondition:
-                        _logger.LogError( "{Message}", "Unmet Precondition error when executing command.");
-                        break;
-                    case InteractionCommandError.UnknownCommand:
-                        _logger.LogError( "{Message}", "Unknown Command error when executing command.");
-                        break;
-                    case InteractionCommandError.ConvertFailed:
-                        _logger.LogError( "{Message}", "Convert Failed error when executing command.");
-                        break;
-                    case InteractionCommandError.BadArgs:
-                        _logger.LogError( "{Message}", "Bad Args error when executing command.");
-                        break;
-                    case InteractionCommandError.Exception:
-                        _logger.LogError( "{Message}", "Exception error when executing command.");
-                        break;
-                    case InteractionCommandError.Unsuccessful:
-                        _logger.LogError( "{Message}", "Unsuccessful error when executing command.");
-                        break;
-                    case InteractionCommandError.ParseFailed:
-                        _logger.LogError( "{Message}", "Parse failed error when executing command.");
-                        break;
-                    default:
-                        _logger.LogError( "{Message}", "Unknown/default error when executing command.");
-                        break;
-                }
-        }
-        catch
-        {
-            if (interaction.Type is InteractionType.ApplicationCommand)
-                await interaction.GetOriginalResponseAsync().ContinueWith(
-                    async (msg) => await msg.Result.DeleteAsync());
-        }
-    }
-    
-    private Task Log(LogMessage message)
-    {
-        var logLevel = message.Severity switch
-        {
-            LogSeverity.Critical => LogLevel.Critical,
-            LogSeverity.Error => LogLevel.Error,
-            LogSeverity.Warning => LogLevel.Warning,
-            LogSeverity.Info => LogLevel.Information,
-            LogSeverity.Verbose => LogLevel.Trace,
-            LogSeverity.Debug => LogLevel.Debug,
-            _ => LogLevel.Information
-        };
-        _logger.Log(logLevel, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
-        return Task.CompletedTask;
     }
 }

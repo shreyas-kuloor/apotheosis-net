@@ -1,27 +1,4 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=14c81b0b_002Da31f_002D4943_002D9c33_002D681ff8839a34/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetGcpDotAsync_ReturnsCorrectCenterAndEdgeColor_GivenGcpStatFromNetwork" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Services.GcpDotServiceTests.GetGcpDotAsync_ReturnsCorrectCenterAndEdgeColor_GivenGcpStatFromNetwork&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Network.GcpDotNetworkDriverTests.SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNullBody&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Network.GcpDotNetworkDriverTests.SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNonNullBody&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Network.GcpDotNetworkDriverTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Services.GcpStatParserTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Services.GcpDotServiceTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.GcpDot.Exceptions.GcpDotNetworkExceptionTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageUpload.Services.ImageUploadServiceTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Modules.SpeakModuleTests.SpeakAsync_WhenUserInVoiceChannel_PlaysInVoiceChannel&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Services.TextToSpeechServiceTests.GenerateSpeechFromPromptAsync_ReturnsStream_GivenNetworkDriverReturnsStream&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Services.TextToSpeechServiceTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests.SendRequestReceiveStreamAsync_SendsRequestAndReturnsResponseStream_GivenSuccessfulHttpRequestWithNullBody&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Network.ElevenLabsNetworkDriverTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.TextToSpeech.Exceptions.TextToSpeechNetworkExceptionTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Network.StableDiffusionNetworkDriverTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Exceptions.ImageGenNetworkExceptionTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.ImageGen.Services.ImageGenServiceTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Exceptions.AiChatNetworkExceptionTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Exceptions.AiThreadChannelStoreExceptionTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Network.OpenAiNetworkDriverTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Services.AiChatServiceTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::792C735E-F952-4094-9146-AFD010F4D138::net6.0::Tests.Unit.Components.AiChat.Services.AiThreadChannelRepositoryTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\Shreyas\apotheosis-net\Tests" Presentation="&amp;lt;Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

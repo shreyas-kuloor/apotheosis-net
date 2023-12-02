@@ -3,16 +3,14 @@ using Apotheosis.Components.TextToSpeech.Interfaces;
 using Apotheosis.Components.TextToSpeech.Models;
 using Apotheosis.Components.TextToSpeech.Services;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Tests.Unit.Components.TextToSpeech.Services;
 
 public sealed class TextToSpeechServiceTests : IDisposable
 {
-    private readonly Mock<IOptions<TextToSpeechSettings>> _textToSpeechOptionsMock;
     private readonly Mock<ITextToSpeechNetworkDriver> _textToSpeechNetworkDriverMock;
-    private readonly ITextToSpeechService _textToSpeechService;
+    private readonly TextToSpeechService _textToSpeechService;
     
     private readonly TextToSpeechSettings _textToSpeechSettings = new()
     {
@@ -24,17 +22,14 @@ public sealed class TextToSpeechServiceTests : IDisposable
 
     public TextToSpeechServiceTests()
     {
-        _textToSpeechOptionsMock = new Mock<IOptions<TextToSpeechSettings>>(MockBehavior.Strict);
-        _textToSpeechOptionsMock.Setup(o => o.Value).Returns(_textToSpeechSettings);
         _textToSpeechNetworkDriverMock = new Mock<ITextToSpeechNetworkDriver>(MockBehavior.Strict);
         _textToSpeechService = new TextToSpeechService(
-            _textToSpeechOptionsMock.Object, 
+            _textToSpeechSettings, 
             _textToSpeechNetworkDriverMock.Object);
     }
 
     public void Dispose()
     {
-        _textToSpeechOptionsMock.VerifyAll();
         _textToSpeechNetworkDriverMock.VerifyAll();
     }
 

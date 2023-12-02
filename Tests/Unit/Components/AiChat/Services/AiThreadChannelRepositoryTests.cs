@@ -1,5 +1,4 @@
 ﻿using Apotheosis.Components.AiChat.Exceptions;
-using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
 using Apotheosis.Components.AiChat.Services;
 using Apotheosis.Components.DateTime.Interfaces;
@@ -11,7 +10,7 @@ namespace Tests.Unit.Components.AiChat.Services;
 public sealed class AiThreadChannelRepositoryTests : IDisposable
 {
     private readonly Mock<IDateTimeService> _dateTimeServiceMock;
-    private readonly IAiThreadChannelRepository _aiThreadChannelRepository;
+    private readonly AiThreadChannelRepository _aiThreadChannelRepository;
 
     public AiThreadChannelRepositoryTests()
     {

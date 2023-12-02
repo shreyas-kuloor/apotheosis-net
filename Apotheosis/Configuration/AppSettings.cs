@@ -1,5 +1,6 @@
 using Apotheosis.Components.AiChat.Configuration;
 using Apotheosis.Components.Client.Configuration;
+using Apotheosis.Components.Converse.Configuration;
 using Apotheosis.Components.GCPDot.Configuration;
 using Apotheosis.Components.ImageGen.Configuration;
 using Apotheosis.Components.TextToSpeech.Configuration;
@@ -32,4 +33,9 @@ public sealed class AppSettings
     /// Gets or sets AI chat related settings.
     /// </summary>
     public AiChatSettings? AiChat { get; set; }
+    
+    /// <summary>
+    /// Gets or sets converse related settings.
+    /// </summary>
+    public ConverseSettings? Converse { get; set; }
 }

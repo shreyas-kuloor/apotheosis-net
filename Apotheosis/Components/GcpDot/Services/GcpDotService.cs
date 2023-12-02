@@ -3,24 +3,17 @@ using Color = SixLabors.ImageSharp.Color;
 
 namespace Apotheosis.Components.GCPDot.Services;
 
-public sealed class GcpDotService : IGcpDotService
+public sealed class GcpDotService(IGcpDotNetworkDriver gcpDotNetworkDriver) : IGcpDotService
 {
     /// <summary>
     /// The path for the request to retrieve the gcp stat information.
     /// </summary>
     public const string GcpPath = "/gcpindex.php?current=1";
-    
-    private readonly IGcpDotNetworkDriver _gcpDotNetworkDriver;
 
-    public GcpDotService(IGcpDotNetworkDriver gcpDotNetworkDriver)
-    {
-        _gcpDotNetworkDriver = gcpDotNetworkDriver;
-    }
-    
     public async Task<(Color centerDotColor, Color edgeDotColor)> GetGcpDotAsync()
     {
         var stringGcpResponse =
-            await _gcpDotNetworkDriver.SendRequestAsync(GcpPath, HttpMethod.Get, null);
+            await gcpDotNetworkDriver.SendRequestAsync(GcpPath, HttpMethod.Get, null);
 
         var gcpStats = GcpStatParser.ParseGcpStats(stringGcpResponse);
 

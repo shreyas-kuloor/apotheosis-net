@@ -2,9 +2,9 @@
 using Apotheosis.Components.ImageGen.Interfaces;
 using Apotheosis.Components.ImageGen.Network;
 using Apotheosis.Components.ImageGen.Services;
+using Apotheosis.Components.Logging.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -13,7 +13,7 @@ namespace Apotheosis.Components.ImageGen.DependencyInjection;
 public static class ImageGenExtensions
 {
     /// <summary>
-    /// Adds client related services.
+    /// Adds image generation related services.
     /// </summary>
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
     /// <param name="imageGenSection">An instance of <see cref="IConfigurationSection"/>.</param>
@@ -21,7 +21,8 @@ public static class ImageGenExtensions
         this IServiceCollection services,
         IConfigurationSection imageGenSection)
     {
-        services.Configure<ImageGenSettings>(imageGenSection);
+        var imageGenSettings = imageGenSection.Get<ImageGenSettings>()!;
+        services.AddSingleton(imageGenSettings);
         AddHttpClient<IImageGenNetworkDriver, StableDiffusionNetworkDriver>(services);
         services.AddScoped<IImageGenService, ImageGenService>();
     }
@@ -38,8 +39,8 @@ public static class ImageGenExtensions
                     StableDiffusionNetworkDriver.Retries,
                     (result, _) =>
                     {
-                        var logger = handlerServices.GetService<ILogger<StableDiffusionNetworkDriver>>();
-                        logger?.LogError(result.Exception, "[{Source}] {Message}", nameof(StableDiffusionNetworkDriver), result.Result?.ToString());
+                        var logger = handlerServices.GetService<ILogService<StableDiffusionNetworkDriver>>();
+                        logger?.LogError(result.Exception, result.Result?.ToString());
                     }))
             .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(StableDiffusionNetworkDriver.Timeout));
     }

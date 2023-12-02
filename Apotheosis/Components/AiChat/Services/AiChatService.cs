@@ -1,45 +1,36 @@
 ﻿using Apotheosis.Components.AiChat.Configuration;
 using Apotheosis.Components.AiChat.Interfaces;
 using Apotheosis.Components.AiChat.Models;
-using Microsoft.Extensions.Options;
 
 namespace Apotheosis.Components.AiChat.Services;
 
-public sealed class AiChatService : IAiChatService
+public sealed class AiChatService(
+    IAiChatNetworkDriver aiChatNetworkDriver,
+    AiChatSettings aiChatSettings)
+    : IAiChatService
 {
-    private readonly IAiChatNetworkDriver _aiChatNetworkDriver;
-    private readonly AiChatSettings _aiChatSettings;
-
-    public AiChatService(
-        IAiChatNetworkDriver aiChatNetworkDriver,
-        IOptions<AiChatSettings> aiChatOptions)
-    {
-        _aiChatNetworkDriver = aiChatNetworkDriver;
-        _aiChatSettings = aiChatOptions.Value;
-    }
-    
-    public async Task<IEnumerable<AiChatMessageDto>> InitializeThreadToAiAsync(string initialPrompt)
+    public async Task<IEnumerable<AiChatMessageDto>> SendSingleMessageToAiAsync(string prompt, string? systemMessage = null)
     {
         var request = new AiChatRequest
         {
-            Model = _aiChatSettings.OpenAiModel,
+            Model = aiChatSettings.OpenAiModel,
             Messages = new List<AiChatMessage>
             {
                 new()
                 {
                     Role = "system",
-                    Content = _aiChatSettings.ChatSystemInstruction
+                    Content = string.IsNullOrWhiteSpace(systemMessage) ? aiChatSettings.ChatSystemInstruction : systemMessage
                 },
                 new()
                 {
                     Role = "user",
-                    Content = initialPrompt
+                    Content = prompt
                 }
             }
         };
 
         var response =
-            await _aiChatNetworkDriver.SendRequestAsync<AiChatResponse>("/v1/chat/completions", HttpMethod.Post, request);
+            await aiChatNetworkDriver.SendRequestAsync<AiChatResponse>("/v1/chat/completions", HttpMethod.Post, request);
 
         return response.Choices!.Select(c => new AiChatMessageDto
         {
@@ -48,9 +39,9 @@ public sealed class AiChatService : IAiChatService
         });
     }
 
-    public async Task<IEnumerable<AiChatMessageDto>> SendThreadToAiAsync(IEnumerable<ThreadMessageDto> threadMessages)
+    public async Task<IEnumerable<AiChatMessageDto>> SendMultipleMessagesToAiAsync(IEnumerable<MessageDto> messages)
     {
-        var transformedMessages = threadMessages.Select(tm => new AiChatMessage
+        var transformedMessages = messages.Select(tm => new AiChatMessage
         {
             Role = tm.IsBot ? "assistant" : "user",
             Content = tm.Content,
@@ -58,19 +49,19 @@ public sealed class AiChatService : IAiChatService
         
         var request = new AiChatRequest
         {
-            Model = _aiChatSettings.OpenAiModel,
+            Model = aiChatSettings.OpenAiModel,
             Messages = new List<AiChatMessage>
             {
                 new()
                 {
                     Role = "system",
-                    Content = _aiChatSettings.ChatSystemInstruction
+                    Content = aiChatSettings.ChatSystemInstruction
                 }
             }.Concat(transformedMessages).ToList()
         };
 
         var response =
-            await _aiChatNetworkDriver.SendRequestAsync<AiChatResponse>("/v1/chat/completions", HttpMethod.Post, request);
+            await aiChatNetworkDriver.SendRequestAsync<AiChatResponse>("/v1/chat/completions", HttpMethod.Post, request);
 
         return response.Choices!.Select(c => new AiChatMessageDto
         {

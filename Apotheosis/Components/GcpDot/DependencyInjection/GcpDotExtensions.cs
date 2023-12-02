@@ -2,9 +2,9 @@
 using Apotheosis.Components.GCPDot.Interfaces;
 using Apotheosis.Components.GCPDot.Network;
 using Apotheosis.Components.GCPDot.Services;
+using Apotheosis.Components.Logging.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -21,7 +21,8 @@ public static class GcpDotExtensions
         this IServiceCollection services,
         IConfigurationSection gcpDotSection)
     {
-        services.Configure<GcpDotSettings>(gcpDotSection);
+        var gcpDotSettings = gcpDotSection.Get<GcpDotSettings>()!;
+        services.AddSingleton(gcpDotSettings);
         AddHttpClient<IGcpDotNetworkDriver, GcpDotNetworkDriver>(services);
         services.AddScoped<IGcpDotService, GcpDotService>();
     }
@@ -38,8 +39,8 @@ public static class GcpDotExtensions
                     GcpDotNetworkDriver.Retries,
                     (result, _) =>
                     {
-                        var logger = handlerServices.GetService<ILogger<GcpDotNetworkDriver>>();
-                        logger?.LogError(result.Exception, "[{Source}] {Message}", nameof(GcpDotNetworkDriver), result.Result?.ToString());
+                        var logger = handlerServices.GetService<ILogService<GcpDotNetworkDriver>>();
+                        logger?.LogError(result.Exception, result.Result?.ToString());
                     }))
             .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(GcpDotNetworkDriver.Timeout));
     }
