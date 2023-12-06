@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Core", "Apotheosis.Core\Apotheosis.Core.csproj", "{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F9C5D579-930E-4CD4-A8DF-62D33D7AE5EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Test", "Apotheosis.Test\Apotheosis.Test.csproj", "{792C735E-F952-4094-9146-AFD010F4D138}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9AC0EFDD-551D-44C3-911E-14F65CD06693}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3376F8A2-3C8B-4E4A-AC72-EAB1AAFBB1D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Core", "src\Apotheosis.Core\Apotheosis.Core.csproj", "{CB406D66-58D6-427F-94DC-80D1A9C77C12}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{85992AAD-5BD1-4451-AAF1-1D567843B7FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Test", "tests\Apotheosis.Test\Apotheosis.Test.csproj", "{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,21 +17,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}.Release|Any CPU.Build.0 = Release|Any CPU
-		{792C735E-F952-4094-9146-AFD010F4D138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{792C735E-F952-4094-9146-AFD010F4D138}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{792C735E-F952-4094-9146-AFD010F4D138}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{792C735E-F952-4094-9146-AFD010F4D138}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB406D66-58D6-427F-94DC-80D1A9C77C12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB406D66-58D6-427F-94DC-80D1A9C77C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB406D66-58D6-427F-94DC-80D1A9C77C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB406D66-58D6-427F-94DC-80D1A9C77C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768} = {3376F8A2-3C8B-4E4A-AC72-EAB1AAFBB1D5}
-		{792C735E-F952-4094-9146-AFD010F4D138} = {85992AAD-5BD1-4451-AAF1-1D567843B7FD}
+		{CB406D66-58D6-427F-94DC-80D1A9C77C12} = {F9C5D579-930E-4CD4-A8DF-62D33D7AE5EF}
+		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7} = {9AC0EFDD-551D-44C3-911E-14F65CD06693}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3213B42-DA4E-4E70-BDD6-FC6C3F966BC1}

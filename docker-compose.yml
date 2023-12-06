@@ -3,6 +3,6 @@
 services:
   client:
     build:
-      context: Apotheosis/
+      context: src/Apotheosis.Core/
       args:
         - BUILD_CONFIGURATION=Release
