@@ -14,5 +14,6 @@ public static class AudioExtensions
     {
         services.AddScoped<IAudioStreamService, AudioStreamService>();
         services.AddSingleton<IVoiceClientService, VoiceClientService>();
+        services.AddSingleton<IVoiceChannelEmptyHandler, VoiceChannelEmptyHandler>();
     }
 }

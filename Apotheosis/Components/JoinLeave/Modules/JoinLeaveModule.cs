@@ -107,14 +107,16 @@ public sealed class JoinLeaveModule(IVoiceClientService voiceClientService) : Ap
             return;
         }
 
-        voiceClientService.TryRemoveVoiceClient(botVoiceChannelId, out var voiceClient);
-        await voiceClient!.CloseAsync();
-        await client.UpdateVoiceStateAsync(new VoiceStateProperties(guild.Id, null));
-        voiceClient.Dispose();
-        await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
+        if (voiceClientService.TryRemoveVoiceClient(botVoiceChannelId, out var voiceClient))
         {
-            Content = "Left voice channel!",
-            Flags = MessageFlags.Ephemeral
-        }));
+            await voiceClient!.CloseAsync();
+            await client.UpdateVoiceStateAsync(new VoiceStateProperties(guild.Id, null));
+            voiceClient.Dispose();
+            await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
+            {
+                Content = "Left voice channel!",
+                Flags = MessageFlags.Ephemeral
+            }));
+        }
     }
 }

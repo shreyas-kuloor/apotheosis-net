@@ -1,4 +1,5 @@
 using Apotheosis.Components.AiChat.Interfaces;
+using Apotheosis.Components.Audio.Interfaces;
 using Apotheosis.Components.Client.Interfaces;
 using Apotheosis.Components.Logging.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,8 @@ public sealed class ClientService(
     GatewayClient discordClient,
     ILogService<ClientService> logger,
     IInteractionHandler interactionHandler,
-    IAiChatThreadMessageHandler aiChatThreadMessageHandler)
+    IAiChatThreadMessageHandler aiChatThreadMessageHandler,
+    IVoiceChannelEmptyHandler voiceChannelEmptyHandler)
     : IClientService
 {
     public async Task RunAsync()
@@ -22,6 +24,8 @@ public sealed class ClientService(
         await interactionHandler.InitializeAsync();
         
         aiChatThreadMessageHandler.InitializeAsync();
+        
+        voiceChannelEmptyHandler.InitializeAsync();
 
         await Task.Delay(Timeout.Infinite);
     }

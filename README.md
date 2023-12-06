@@ -7,3 +7,4 @@
 - Converse command thread functionality
 - Receive voice for conversation with AI
 - Have bot auto-leave voice channel if all other non-bot users leave
+- Emote counter
