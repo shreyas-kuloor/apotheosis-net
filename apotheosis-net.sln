@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apotheosis", "Apotheosis\Apotheosis.csproj", "{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Core", "Apotheosis.Core\Apotheosis.Core.csproj", "{E7070E2C-FBB6-4E9A-936F-50A02C8E2768}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{792C735E-F952-4094-9146-AFD010F4D138}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Test", "Apotheosis.Test\Apotheosis.Test.csproj", "{792C735E-F952-4094-9146-AFD010F4D138}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3376F8A2-3C8B-4E4A-AC72-EAB1AAFBB1D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{85992AAD-5BD1-4451-AAF1-1D567843B7FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E7070E2C-FBB6-4E9A-936F-50A02C8E2768} = {3376F8A2-3C8B-4E4A-AC72-EAB1AAFBB1D5}
+		{792C735E-F952-4094-9146-AFD010F4D138} = {85992AAD-5BD1-4451-AAF1-1D567843B7FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3213B42-DA4E-4E70-BDD6-FC6C3F966BC1}
