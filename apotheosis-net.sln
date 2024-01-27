@@ -4,12 +4,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F9C5D579-930E-4CD4-A8DF-62D33D7AE5EF}"
+	ProjectSection(SolutionItems) = preProject
+		src\appsettings.example.json = src\appsettings.example.json
+		src\appsettings.json = src\appsettings.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9AC0EFDD-551D-44C3-911E-14F65CD06693}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Core", "src\Apotheosis.Core\Apotheosis.Core.csproj", "{CB406D66-58D6-427F-94DC-80D1A9C77C12}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Test", "tests\Apotheosis.Test\Apotheosis.Test.csproj", "{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apotheosis.Infrastructure", "src\Apotheosis.Infrastructure\Apotheosis.Infrastructure.csproj", "{0D0BD7FA-1AE7-4068-8F89-E3E645406591}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{866F6209-4C71-4E20-A085-120205C96303}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		docker-compose.debug.yml = docker-compose.debug.yml
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		Makefile = Makefile
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +41,10 @@ Global
 		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D0BD7FA-1AE7-4068-8F89-E3E645406591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D0BD7FA-1AE7-4068-8F89-E3E645406591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D0BD7FA-1AE7-4068-8F89-E3E645406591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D0BD7FA-1AE7-4068-8F89-E3E645406591}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +52,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CB406D66-58D6-427F-94DC-80D1A9C77C12} = {F9C5D579-930E-4CD4-A8DF-62D33D7AE5EF}
 		{0B0638FF-D727-4C3D-B6BE-8FCB7E4150C7} = {9AC0EFDD-551D-44C3-911E-14F65CD06693}
+		{0D0BD7FA-1AE7-4068-8F89-E3E645406591} = {F9C5D579-930E-4CD4-A8DF-62D33D7AE5EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3213B42-DA4E-4E70-BDD6-FC6C3F966BC1}

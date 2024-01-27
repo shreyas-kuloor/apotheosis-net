@@ -1,5 +1,8 @@
 ﻿all:
 
+migrations:
+	cd src/Apotheosis.Infrastructure && dotnet ef database update	
+
 up:
 	docker-compose up -d
 

@@ -12,7 +12,7 @@ public sealed class AiChatThreadMessageHandler(
     IAiThreadChannelRepository aiThreadChannelRepository)
     : IAiChatThreadMessageHandler
 {
-    public void InitializeAsync()
+    public void Initialize()
     {
         discordClient.MessageCreate += MessageReceivedAsync;
     }

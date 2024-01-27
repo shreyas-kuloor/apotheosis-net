@@ -2,5 +2,5 @@
 
 public interface IVoiceChannelEmptyHandler
 {
-    void InitializeAsync();
+    void Initialize();
 }

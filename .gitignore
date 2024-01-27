@@ -13,8 +13,14 @@ UpgradeLog*.htm
 
 #App settings file
 appsettings.json
+appsettings.Infrastructure.json
 
 bin/
 
 # User specific settings from JetBrains Rider
 *.DotSettings.user
+
+# SQLite DB files
+*.db
+*.db-shm
+*.db-wal

@@ -9,9 +9,11 @@ using Apotheosis.Core.Components.Logging.DependencyInjection;
 using Apotheosis.Core.Components.TextToSpeech.DependencyInjection;
 using Apotheosis.Core.Components.Client.Interfaces;
 using Apotheosis.Core.Configuration;
+using Apotheosis.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Apotheosis.Core.Components.EmojiCounter.DependencyInjection;
 
 namespace Apotheosis.Core
 {
@@ -30,6 +32,8 @@ namespace Apotheosis.Core
             var services = new ServiceCollection();
             ConfigureServices(services);
             _serviceProvider = services.BuildServiceProvider();
+
+            MigrationManager.MigrateDatabase(_serviceProvider);
         }
 
         public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
@@ -44,6 +48,7 @@ namespace Apotheosis.Core
         {
             services.AddLogging(builder => builder.AddConsole());
             services.AddLoggingServices();
+            services.AddApotheosisDbContext(_configuration.GetConnectionString("Apotheosis"));
             services.AddClientServices(_configuration.GetSection(nameof(AppSettings.Client)).GetValue<string>("BotToken")!);
             services.AddGcpDotServices(_configuration.GetSection(nameof(AppSettings.GcpDot)));
             services.AddTextToSpeechServices(_configuration.GetSection(nameof(AppSettings.TextToSpeech)));
@@ -52,6 +57,7 @@ namespace Apotheosis.Core
             services.AddDateTimeServices();
             services.AddAiChatServices(_configuration.GetSection(nameof(AppSettings.AiChat)));
             services.AddConverseServices(_configuration.GetSection(nameof(AppSettings.Converse)));
+            services.AddEmojiCounterServices();
         }
     }
 }

@@ -40,8 +40,8 @@ public sealed class AiChatServiceTests : IDisposable
         var expectedRequest = new AiChatRequest
         {
             Model = _aiChatSettings.OpenAiModel,
-            Messages = new List<AiChatMessage>
-            {
+            Messages =
+            [
                 new()
                 {
                     Role = "system",
@@ -52,7 +52,7 @@ public sealed class AiChatServiceTests : IDisposable
                     Role = "user",
                     Content = initialPrompt
                 }
-            }
+            ]
         };
 
         var response = new AiChatResponse

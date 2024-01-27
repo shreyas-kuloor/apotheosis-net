@@ -1,6 +1,7 @@
 using Apotheosis.Core.Components.AiChat.Interfaces;
 using Apotheosis.Core.Components.Audio.Interfaces;
 using Apotheosis.Core.Components.Client.Interfaces;
+using Apotheosis.Core.Components.EmojiCounter.Interfaces;
 using Apotheosis.Core.Components.Logging.Interfaces;
 using Microsoft.Extensions.Logging;
 using NetCord.Gateway;
@@ -12,7 +13,8 @@ public sealed class ClientService(
     ILogService<ClientService> logger,
     IInteractionHandler interactionHandler,
     IAiChatThreadMessageHandler aiChatThreadMessageHandler,
-    IVoiceChannelEmptyHandler voiceChannelEmptyHandler)
+    IVoiceChannelEmptyHandler voiceChannelEmptyHandler,
+    IEmojiCounterReactionHandler emojiCounterReactionHandler)
     : IClientService
 {
     public async Task RunAsync()
@@ -23,9 +25,11 @@ public sealed class ClientService(
         
         await interactionHandler.InitializeAsync();
         
-        aiChatThreadMessageHandler.InitializeAsync();
+        aiChatThreadMessageHandler.Initialize();
         
-        voiceChannelEmptyHandler.InitializeAsync();
+        voiceChannelEmptyHandler.Initialize();
+
+        emojiCounterReactionHandler.Initialize();
 
         await Task.Delay(Timeout.Infinite);
     }

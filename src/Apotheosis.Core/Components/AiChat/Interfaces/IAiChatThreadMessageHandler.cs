@@ -2,5 +2,5 @@
 
 public interface IAiChatThreadMessageHandler
 {
-    void InitializeAsync();
+    void Initialize();
 }

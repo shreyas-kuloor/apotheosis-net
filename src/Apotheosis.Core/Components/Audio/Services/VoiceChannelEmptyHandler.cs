@@ -8,7 +8,7 @@ public sealed class VoiceChannelEmptyHandler(
     IVoiceClientService voiceClientService)
     : IVoiceChannelEmptyHandler
 {
-    public void InitializeAsync()
+    public void Initialize()
     {
         discordClient.VoiceStateUpdate += VoiceStateUpdateAsync;
     }
