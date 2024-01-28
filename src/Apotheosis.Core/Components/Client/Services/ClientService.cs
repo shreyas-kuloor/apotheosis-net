@@ -14,7 +14,8 @@ public sealed class ClientService(
     IInteractionHandler interactionHandler,
     IAiChatThreadMessageHandler aiChatThreadMessageHandler,
     IVoiceChannelEmptyHandler voiceChannelEmptyHandler,
-    IEmojiCounterReactionHandler emojiCounterReactionHandler)
+    IEmojiCounterReactionHandler emojiCounterReactionHandler,
+    IEmojiCounterMessageHandler emojiCounterMessageHandler)
     : IClientService
 {
     public async Task RunAsync()
@@ -30,6 +31,8 @@ public sealed class ClientService(
         voiceChannelEmptyHandler.Initialize();
 
         emojiCounterReactionHandler.Initialize();
+
+        emojiCounterMessageHandler.Initialize();
 
         await Task.Delay(Timeout.Infinite);
     }

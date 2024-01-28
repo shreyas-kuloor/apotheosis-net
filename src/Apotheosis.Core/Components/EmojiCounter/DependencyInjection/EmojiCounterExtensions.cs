@@ -14,5 +14,6 @@ public static class EmojiCounterExtensions
     {
         services.AddScoped<IEmojiCounterService, EmojiCounterService>();
         services.AddSingleton<IEmojiCounterReactionHandler, EmojiCounterReactionHandler>();
+        services.AddSingleton<IEmojiCounterMessageHandler, EmojiCounterMessageHandler>();
     }
 }
