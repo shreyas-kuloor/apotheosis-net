@@ -1,14 +1,12 @@
-﻿namespace Apotheosis.Infrastructure.Entities;
+﻿namespace Apotheosis.Core.Components.EmojiCounter.Models;
 
-public sealed class EmojiUsage
+public class EmojiCounterDto
 {
-    public int Id { get; set; }
-
     public string? Name { get; set; }
-    
+
     public ulong EmojiId { get; set; }
-    
+
     public ulong GuildId { get; set; }
-    
+
     public int Count { get; set; }
 }

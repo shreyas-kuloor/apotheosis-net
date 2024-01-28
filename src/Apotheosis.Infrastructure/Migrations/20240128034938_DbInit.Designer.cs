@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Apotheosis.Infrastructure.Migrations
 {
     [DbContext(typeof(ApotheosisDbContext))]
-    [Migration("20240127213534_DbInit")]
+    [Migration("20240128034938_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -40,6 +40,9 @@ namespace Apotheosis.Infrastructure.Migrations
 
                     b.Property<decimal>("GuildId")
                         .HasColumnType("numeric(20,0)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

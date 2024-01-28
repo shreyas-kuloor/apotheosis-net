@@ -1,4 +1,5 @@
 ﻿using Apotheosis.Core.Components.EmojiCounter.Interfaces;
+using Apotheosis.Core.Components.EmojiCounter.Models;
 using Apotheosis.Infrastructure.Data;
 using Apotheosis.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace Apotheosis.Core.Components.EmojiCounter.Services;
 
 public class EmojiCounterService(ApotheosisDbContext context) : IEmojiCounterService
 {
-    public async Task IncrementEmojiCountAsync(ulong guildId, ulong emojiId)
+    public async Task IncrementEmojiCountAsync(ulong guildId, ulong emojiId, string? emojiName)
     {
         var existingEmojiUsage = await context.EmojiUsages.FirstOrDefaultAsync(e => e.GuildId == guildId && e.EmojiId == emojiId);
 
@@ -20,6 +21,7 @@ public class EmojiCounterService(ApotheosisDbContext context) : IEmojiCounterSer
 
         var newEmojiUsage = new EmojiUsage
         {
+            Name = emojiName,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 1,
@@ -41,5 +43,17 @@ public class EmojiCounterService(ApotheosisDbContext context) : IEmojiCounterSer
                 await context.SaveChangesAsync();
             }           
         }
+    }
+
+    public async Task<IEnumerable<EmojiCounterDto>> GetEmojiCountsForGuildAsync(ulong guildId)
+    {
+        var emojiUsages = await context.EmojiUsages.Where(emojiUsage => emojiUsage.GuildId == guildId).ToListAsync();
+
+        return emojiUsages.Select(emojiUsage => new EmojiCounterDto { 
+            Name = emojiUsage.Name,
+            EmojiId = emojiUsage.EmojiId,
+            GuildId = emojiUsage.GuildId, 
+            Count = emojiUsage.Count 
+        });
     }
 }

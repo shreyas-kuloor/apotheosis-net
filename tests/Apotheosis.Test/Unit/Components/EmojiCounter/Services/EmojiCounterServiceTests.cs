@@ -1,4 +1,5 @@
-﻿using Apotheosis.Core.Components.EmojiCounter.Services;
+﻿using Apotheosis.Core.Components.EmojiCounter.Models;
+using Apotheosis.Core.Components.EmojiCounter.Services;
 using Apotheosis.Infrastructure.Data;
 using Apotheosis.Infrastructure.Entities;
 using Apotheosis.Test.Utils;
@@ -10,7 +11,8 @@ namespace Apotheosis.Test.Unit.Components.EmojiCounter.Services;
 public sealed class EmojiCounterServiceTests : IDisposable
 {
     const ulong emojiId = 123;
-    const ulong guildId = 123;
+    const ulong guildId = 321;
+    const string name = "test";
 
     private readonly ApotheosisDbContext _context;
     private readonly EmojiCounterService _emojiCounterService;
@@ -31,12 +33,13 @@ public sealed class EmojiCounterServiceTests : IDisposable
     {
         var expectedEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 1,
         };
 
-        await _emojiCounterService.IncrementEmojiCountAsync(guildId, emojiId);
+        await _emojiCounterService.IncrementEmojiCountAsync(guildId, emojiId, name);
 
         var actualEmojiUsage = await _context.EmojiUsages.FirstOrDefaultAsync(e => e.GuildId == guildId && e.EmojiId == emojiId);
 
@@ -48,6 +51,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
     {
         var existingEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 5,
@@ -55,6 +59,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
 
         var expectedEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 6,
@@ -63,7 +68,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
         await _context.EmojiUsages.AddAsync(existingEmojiUsage);
         await _context.SaveChangesAsync();
 
-        await _emojiCounterService.IncrementEmojiCountAsync(guildId, emojiId);
+        await _emojiCounterService.IncrementEmojiCountAsync(guildId, emojiId, name);
 
         var actualEmojiUsage = await _context.EmojiUsages.FirstOrDefaultAsync(e => e.GuildId == guildId && e.EmojiId == emojiId);
 
@@ -85,6 +90,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
     {
         var existingEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 0,
@@ -92,6 +98,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
 
         var expectedEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 0,
@@ -112,6 +119,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
     {
         var existingEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 5,
@@ -119,6 +127,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
 
         var expectedEmojiUsage = new EmojiUsage
         {
+            Name = name,
             EmojiId = emojiId,
             GuildId = guildId,
             Count = 4,
@@ -132,6 +141,60 @@ public sealed class EmojiCounterServiceTests : IDisposable
         var actualEmojiUsage = await _context.EmojiUsages.FirstOrDefaultAsync(e => e.GuildId == guildId && e.EmojiId == emojiId);
 
         actualEmojiUsage.Should().BeEquivalentTo(expectedEmojiUsage, options => options.Excluding(e => e.Id));
+    }
+
+    [Fact]
+    public async Task GetEmojiCountsForGuildAsync_GetsAllEmojiCountsForProvidedGuildId_GivenExistingEmojiUsagesForGuildId()
+    {
+        List<EmojiUsage> existingEmojiUsages = 
+        [
+            new EmojiUsage
+            {
+                Name = name,
+                EmojiId = emojiId,
+                GuildId = guildId,
+                Count = 5,
+            },
+            new EmojiUsage
+            {
+                Name = "test2",
+                EmojiId = 124,
+                GuildId = guildId,
+                Count = 2
+            },
+            new EmojiUsage
+            {
+                Name = "test3",
+                EmojiId = 125,
+                GuildId = 322,
+                Count = 2
+            },
+        ];
+
+        List<EmojiCounterDto> expectedEmojiUsages = 
+        [
+            new EmojiCounterDto
+            {
+                Name = name,
+                EmojiId = emojiId,
+                GuildId = guildId,
+                Count = 5,
+            },
+            new EmojiCounterDto
+            {
+                Name = "test2",
+                EmojiId = 124,
+                GuildId = guildId,
+                Count = 2
+            },
+        ];
+
+        await _context.EmojiUsages.AddRangeAsync(existingEmojiUsages);
+        await _context.SaveChangesAsync();
+
+        var actualEmojiUsages = await _emojiCounterService.GetEmojiCountsForGuildAsync(guildId);
+
+        actualEmojiUsages.Should().BeEquivalentTo(expectedEmojiUsages);
     }
 
     private void ClearDatabase()

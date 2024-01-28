@@ -8,7 +8,7 @@ public sealed partial class EmojiCounterMessageHandler(
     GatewayClient discordClient, 
     IEmojiCounterService emojiCounterService) : IEmojiCounterMessageHandler
 {
-    [GeneratedRegex(@"<:[^:]+:(\d+)>")]
+    [GeneratedRegex(@"<:([^:]+):(\d+)>")]
     private static partial Regex EmojiPatternRegex();
 
     public void Initialize()
@@ -27,17 +27,18 @@ public sealed partial class EmojiCounterMessageHandler(
             if (successfulMatches.Any())
             {
                 var emojiIds = successfulMatches
-                    .Select(m => m.Groups[1].Value)
-                    .Select(idString =>
+                    .Select(m => 
                     {
-                        _ = ulong.TryParse(idString, out var id);
-                        return id;
+                        var name = m.Groups[1].Value;
+                        var id = ulong.TryParse(m.Groups[2].Value, out ulong parsedId) ? parsedId : 0;
+                        return (Name: name, Id: id);
                     })
+                    .Where(e => e.Id != 0)
                     .Distinct();
 
-                foreach(var emojiId in emojiIds)
+                foreach(var (emojiName, emojiId) in emojiIds)
                 {
-                    await emojiCounterService.IncrementEmojiCountAsync(message.GuildId.Value, emojiId);
+                    await emojiCounterService.IncrementEmojiCountAsync(message.GuildId.Value, emojiId, emojiName);
                 }
             }
         }

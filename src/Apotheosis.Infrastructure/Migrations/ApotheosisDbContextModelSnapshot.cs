@@ -38,6 +38,9 @@ namespace Apotheosis.Infrastructure.Migrations
                     b.Property<decimal>("GuildId")
                         .HasColumnType("numeric(20,0)");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmojiId", "GuildId")
