@@ -4,7 +4,7 @@ using Apotheosis.Core.Components.Converse.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Apotheosis.Core.Components.Converse.DependencyInjection;
+namespace Apotheosis.Core.Components.Converse.Extensions;
 
 public static class ConverseExtensions
 {

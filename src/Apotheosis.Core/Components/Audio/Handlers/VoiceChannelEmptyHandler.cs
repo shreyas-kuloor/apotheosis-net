@@ -1,29 +1,26 @@
 ﻿using Apotheosis.Core.Components.Audio.Interfaces;
 using NetCord.Gateway;
+using NetCord.Hosting.Gateway;
 
-namespace Apotheosis.Core.Components.Audio.Services;
+namespace Apotheosis.Core.Components.Audio.Handlers;
 
+[GatewayEvent(nameof(GatewayClient.VoiceStateUpdate))]
 public sealed class VoiceChannelEmptyHandler(
     GatewayClient discordClient,
     IVoiceClientService voiceClientService)
-    : IVoiceChannelEmptyHandler
+    : IGatewayEventHandler<VoiceState>
 {
-    public void Initialize()
-    {
-        discordClient.VoiceStateUpdate += VoiceStateUpdateAsync;
-    }
-
-    private async ValueTask VoiceStateUpdateAsync(VoiceState voiceState)
+    public async ValueTask HandleAsync(VoiceState voiceState)
     {
         if (voiceState.User == null || voiceState.User.IsBot)
         {
             return;
         }
-        
+
         if (voiceState.ChannelId is null)
         {
             var botUser = await discordClient.Rest.GetCurrentUserAsync();
-            
+
             var guild = discordClient.Cache.Guilds[voiceState.GuildId.GetValueOrDefault()];
 
             if (!guild.VoiceStates.TryGetValue(botUser.Id, out var botVoiceState))

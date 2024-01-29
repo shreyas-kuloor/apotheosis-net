@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Apotheosis.Core.Components.GCPDot.DependencyInjection;
+namespace Apotheosis.Core.Components.GcpDot.Extensions;
 
 public static class GcpDotExtensions
 {

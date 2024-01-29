@@ -1,63 +1,58 @@
-﻿using Apotheosis.Core.Components.AiChat.DependencyInjection;
-using Apotheosis.Core.Components.Audio.DependencyInjection;
-using Apotheosis.Core.Components.Client.DependencyInjection;
-using Apotheosis.Core.Components.Converse.DependencyInjection;
-using Apotheosis.Core.Components.DateTime.DependencyInjection;
-using Apotheosis.Core.Components.GCPDot.DependencyInjection;
-using Apotheosis.Core.Components.ImageGen.DependencyInjection;
-using Apotheosis.Core.Components.Logging.DependencyInjection;
-using Apotheosis.Core.Components.TextToSpeech.DependencyInjection;
-using Apotheosis.Core.Components.Client.Interfaces;
-using Apotheosis.Core.Configuration;
+﻿using Apotheosis.Core.Configuration;
 using Apotheosis.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Apotheosis.Core.Components.EmojiCounter.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NetCord.Hosting.Gateway;
+using NetCord.Hosting.Services.ApplicationCommands;
+using NetCord;
+using NetCord.Services.ApplicationCommands;
+using NetCord.Hosting.Services;
+using NetCord.Gateway;
+using Apotheosis.Core.Components.AiChat.Extensions;
+using Apotheosis.Core.Components.Audio.Extensions;
+using Apotheosis.Core.Components.Converse.Extensions;
+using Apotheosis.Core.Components.DateTime.Extensions;
+using Apotheosis.Core.Components.EmojiCounter.Extensions;
+using Apotheosis.Core.Components.GcpDot.Extensions;
+using Apotheosis.Core.Components.ImageGen.Extensions;
+using Apotheosis.Core.Components.Logging.Extensions;
+using Apotheosis.Core.Components.TextToSpeech.Extensions;
 
-namespace Apotheosis.Core
-{
-    public sealed class Program
+var builder = Host.CreateDefaultBuilder(args)
+    .UseDiscordGateway(options =>
     {
-        private readonly IConfiguration _configuration;
-        private readonly IServiceProvider _serviceProvider;
-
-        public Program()
+        options.Configuration = new()
         {
-            _configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
+            Intents = GatewayIntents.AllNonPrivileged | GatewayIntents.MessageContent
+        };
+    })
+    .UseApplicationCommandService<SlashCommandInteraction, SlashCommandContext>();
 
-            var services = new ServiceCollection();
-            ConfigureServices(services);
-            _serviceProvider = services.BuildServiceProvider();
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
 
-            MigrationManager.MigrateDatabase(_serviceProvider);
-        }
+builder.ConfigureServices(services =>
+{
+    services.AddLoggingServices();
+    services.AddApotheosisDbContext(configuration.GetConnectionString("Apotheosis"));
+    services.AddGcpDotServices(configuration.GetSection(nameof(AppSettings.GcpDot)));
+    services.AddTextToSpeechServices(configuration.GetSection(nameof(AppSettings.TextToSpeech)));
+    services.AddAudioServices();
+    services.AddImageGenServices(configuration.GetSection(nameof(AppSettings.ImageGen)));
+    services.AddDateTimeServices();
+    services.AddAiChatServices(configuration.GetSection(nameof(AppSettings.AiChat)));
+    services.AddConverseServices(configuration.GetSection(nameof(AppSettings.Converse)));
+    services.AddEmojiCounterServices();
+    services.AddGatewayEventHandlers(typeof(Program).Assembly);
+});
 
-        public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
-        public async Task MainAsync()
-        {
-            var clientService = _serviceProvider.GetRequiredService<IClientService>();
-            await clientService.RunAsync();
-        }
+var host = builder.Build()
+    .AddModules(typeof(Program).Assembly)
+    .UseGatewayEventHandlers();
 
-        private void ConfigureServices(IServiceCollection services)
-        {
-            services.AddLogging(builder => builder.AddConsole());
-            services.AddLoggingServices();
-            services.AddApotheosisDbContext(_configuration.GetConnectionString("Apotheosis"));
-            services.AddClientServices(_configuration.GetSection(nameof(AppSettings.Client)).GetValue<string>("BotToken")!);
-            services.AddGcpDotServices(_configuration.GetSection(nameof(AppSettings.GcpDot)));
-            services.AddTextToSpeechServices(_configuration.GetSection(nameof(AppSettings.TextToSpeech)));
-            services.AddAudioServices();
-            services.AddImageGenServices(_configuration.GetSection(nameof(AppSettings.ImageGen)));
-            services.AddDateTimeServices();
-            services.AddAiChatServices(_configuration.GetSection(nameof(AppSettings.AiChat)));
-            services.AddConverseServices(_configuration.GetSection(nameof(AppSettings.Converse)));
-            services.AddEmojiCounterServices();
-        }
-    }
-}
+MigrationManager.MigrateDatabase(host.Services);
+
+await host.RunAsync();

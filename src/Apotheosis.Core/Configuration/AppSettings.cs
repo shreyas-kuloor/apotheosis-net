@@ -1,5 +1,4 @@
 using Apotheosis.Core.Components.AiChat.Configuration;
-using Apotheosis.Core.Components.Client.Configuration;
 using Apotheosis.Core.Components.Converse.Configuration;
 using Apotheosis.Core.Components.GCPDot.Configuration;
 using Apotheosis.Core.Components.ImageGen.Configuration;
@@ -8,12 +7,7 @@ using Apotheosis.Core.Components.TextToSpeech.Configuration;
 namespace Apotheosis.Core.Configuration;
 
 public sealed class AppSettings
-{
-    /// <summary>
-    /// Gets or sets client related settings.
-    /// </summary>
-    public ClientSettings? Client { get; set; }
-    
+{   
     /// <summary>
     /// Gets or sets GCP dot related settings.
     /// </summary>

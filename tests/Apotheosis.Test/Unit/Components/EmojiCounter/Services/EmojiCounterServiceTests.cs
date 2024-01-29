@@ -1,10 +1,10 @@
 ﻿using Apotheosis.Core.Components.EmojiCounter.Models;
-using Apotheosis.Core.Components.EmojiCounter.Services;
 using Apotheosis.Infrastructure.Data;
 using Apotheosis.Infrastructure.Entities;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Apotheosis.Core.Components.EmojiCounter.Services;
 
 namespace Apotheosis.Test.Unit.Components.EmojiCounter.Services;
 

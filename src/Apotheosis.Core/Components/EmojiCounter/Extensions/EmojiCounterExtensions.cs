@@ -2,7 +2,7 @@
 using Apotheosis.Core.Components.EmojiCounter.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Apotheosis.Core.Components.EmojiCounter.DependencyInjection;
+namespace Apotheosis.Core.Components.EmojiCounter.Extensions;
 
 public static class EmojiCounterExtensions
 {
@@ -13,7 +13,5 @@ public static class EmojiCounterExtensions
     public static void AddEmojiCounterServices(this IServiceCollection services)
     {
         services.AddScoped<IEmojiCounterService, EmojiCounterService>();
-        services.AddSingleton<IEmojiCounterReactionHandler, EmojiCounterReactionHandler>();
-        services.AddSingleton<IEmojiCounterMessageHandler, EmojiCounterMessageHandler>();
     }
 }

@@ -41,7 +41,7 @@ public class EmojiCounterService(ApotheosisDbContext context) : IEmojiCounterSer
             {
                 existingEmojiUsage.Count--;
                 await context.SaveChangesAsync();
-            }           
+            }
         }
     }
 
@@ -49,11 +49,12 @@ public class EmojiCounterService(ApotheosisDbContext context) : IEmojiCounterSer
     {
         var emojiUsages = await context.EmojiUsages.Where(emojiUsage => emojiUsage.GuildId == guildId).ToListAsync();
 
-        return emojiUsages.Select(emojiUsage => new EmojiCounterDto { 
+        return emojiUsages.Select(emojiUsage => new EmojiCounterDto
+        {
             Name = emojiUsage.Name,
             EmojiId = emojiUsage.EmojiId,
-            GuildId = emojiUsage.GuildId, 
-            Count = emojiUsage.Count 
+            GuildId = emojiUsage.GuildId,
+            Count = emojiUsage.Count
         });
     }
 }

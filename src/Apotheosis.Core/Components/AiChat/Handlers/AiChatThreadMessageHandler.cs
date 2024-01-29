@@ -2,22 +2,18 @@
 using Apotheosis.Core.Components.AiChat.Models;
 using NetCord;
 using NetCord.Gateway;
+using NetCord.Hosting.Gateway;
 using NetCord.Rest;
 
-namespace Apotheosis.Core.Components.AiChat.Services;
+namespace Apotheosis.Core.Components.AiChat.Handlers;
 
+[GatewayEvent(nameof(GatewayClient.MessageCreate))]
 public sealed class AiChatThreadMessageHandler(
-    GatewayClient discordClient,
     IAiChatService aiChatService,
     IAiThreadChannelRepository aiThreadChannelRepository)
-    : IAiChatThreadMessageHandler
+    : IGatewayEventHandler<Message>
 {
-    public void Initialize()
-    {
-        discordClient.MessageCreate += MessageReceivedAsync;
-    }
-
-    private async ValueTask MessageReceivedAsync(Message message)
+    public async ValueTask HandleAsync(Message message)
     {
         if (message is { Channel: GuildThread thread, Author.IsBot: false })
         {
@@ -39,9 +35,9 @@ public sealed class AiChatThreadMessageHandler(
                     });
 
                 var response = await aiChatService.SendMultipleMessagesToAiAsync(threadContents);
-                
+
                 var aiChatMessageDtos = response.ToList();
-        
+
                 for (var index = 0; index < aiChatMessageDtos.Count; index++)
                 {
                     await thread.SendMessageAsync(new MessageProperties

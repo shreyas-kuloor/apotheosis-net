@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Apotheosis.Core.Components.TextToSpeech.DependencyInjection;
+namespace Apotheosis.Core.Components.TextToSpeech.Extensions;
 
 public static class TextToSpeechExtensions
 {

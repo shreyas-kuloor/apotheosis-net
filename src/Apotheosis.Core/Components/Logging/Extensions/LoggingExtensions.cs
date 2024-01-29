@@ -2,7 +2,7 @@
 using Apotheosis.Core.Components.Logging.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Apotheosis.Core.Components.Logging.DependencyInjection;
+namespace Apotheosis.Core.Components.Logging.Extensions;
 
 public static class LoggingExtensions
 {

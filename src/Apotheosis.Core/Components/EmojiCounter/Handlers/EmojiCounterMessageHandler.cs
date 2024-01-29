@@ -1,22 +1,19 @@
 ﻿using System.Text.RegularExpressions;
 using Apotheosis.Core.Components.EmojiCounter.Interfaces;
 using NetCord.Gateway;
+using NetCord.Hosting.Gateway;
 
-namespace Apotheosis.Core.Components.EmojiCounter.Services;
+namespace Apotheosis.Core.Components.EmojiCounter.Handlers;
 
+[GatewayEvent(nameof(GatewayClient.MessageCreate))]
 public sealed partial class EmojiCounterMessageHandler(
-    GatewayClient discordClient, 
-    IEmojiCounterService emojiCounterService) : IEmojiCounterMessageHandler
+    IEmojiCounterService emojiCounterService) 
+    : IGatewayEventHandler<Message>
 {
     [GeneratedRegex(@"<:([^:]+):(\d+)>")]
     private static partial Regex EmojiPatternRegex();
 
-    public void Initialize()
-    {
-        discordClient.MessageCreate += EmojiMessagedAsync;
-    }
-
-    private async ValueTask EmojiMessagedAsync(Message message)
+    public async ValueTask HandleAsync(Message message)
     {
         if (message is { Author.IsBot: false, GuildId: not null })
         {

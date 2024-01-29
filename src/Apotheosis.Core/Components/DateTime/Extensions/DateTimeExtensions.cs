@@ -2,8 +2,7 @@
 using Apotheosis.Core.Components.DateTime.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Apotheosis.Core.Components.DateTime.DependencyInjection;
-
+namespace Apotheosis.Core.Components.DateTime.Extensions;
 
 public static class DateTimeExtensions
 {

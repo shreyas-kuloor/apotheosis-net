@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Apotheosis.Core.Components.AiChat.DependencyInjection;
+namespace Apotheosis.Core.Components.AiChat.Extensions;
 
 public static class AiChatExtensions
 {
@@ -26,7 +26,6 @@ public static class AiChatExtensions
         AddHttpClient<IAiChatNetworkDriver, OpenAiNetworkDriver>(services);
         services.AddSingleton<IAiThreadChannelRepository, AiThreadChannelRepository>();
         services.AddScoped<IAiChatService, AiChatService>();
-        services.AddSingleton<IAiChatThreadMessageHandler, AiChatThreadMessageHandler>();
     }
     
     private static void AddHttpClient<TClient, TImplementation>(

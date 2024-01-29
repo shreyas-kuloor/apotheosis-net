@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Apotheosis.Core.Components.ImageGen.DependencyInjection;
+namespace Apotheosis.Core.Components.ImageGen.Extensions;
 
 public static class ImageGenExtensions
 {
