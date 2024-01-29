@@ -5,4 +5,4 @@
 - Random reactions
 - Converse command thread functionality
 - Receive voice for conversation with AI
-- Emote counter
+- Emoji counter - Support standard emojis, add filters to command to filter out standard emojis, only show emojis from current guild
