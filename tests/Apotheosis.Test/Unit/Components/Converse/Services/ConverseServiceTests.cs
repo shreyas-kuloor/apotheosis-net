@@ -1,13 +1,13 @@
-﻿using Apotheosis.Core.Components.AiChat.Interfaces;
-using Apotheosis.Core.Components.AiChat.Models;
-using Apotheosis.Core.Components.Converse.Configuration;
-using Apotheosis.Core.Components.Converse.Services;
-using Apotheosis.Core.Components.Logging.Interfaces;
-using Apotheosis.Core.Components.TextToSpeech.Interfaces;
+﻿using Apotheosis.Core.Features.AiChat.Interfaces;
+using Apotheosis.Core.Features.AiChat.Models;
+using Apotheosis.Core.Features.Converse.Configuration;
+using Apotheosis.Core.Features.Converse.Services;
+using Apotheosis.Core.Features.Logging.Interfaces;
+using Apotheosis.Core.Features.TextToSpeech.Interfaces;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Components.Converse.Services;
+namespace Apotheosis.Test.Unit.Features.Converse.Services;
 
 public sealed class ConverseServiceTests : IDisposable
 {
@@ -65,7 +65,7 @@ public sealed class ConverseServiceTests : IDisposable
             _aiChatServiceMock.Object,
             _textToSpeechServiceMock.Object,
             _loggerMock.Object, 
-            _converseSettings);
+            Options.Create(_converseSettings));
 
         var actual = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId);
         
@@ -103,7 +103,7 @@ public sealed class ConverseServiceTests : IDisposable
             _aiChatServiceMock.Object,
             _textToSpeechServiceMock.Object,
             _loggerMock.Object, 
-            _converseSettings);
+            Options.Create(_converseSettings));
 
         var actual = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId);
         
@@ -145,14 +145,14 @@ public sealed class ConverseServiceTests : IDisposable
 
         var noDefaultConverseSettings = new ConverseSettings
         {
-            VoiceSystemInstructions = new Dictionary<string, string>()
+            VoiceSystemInstructions = []
         };
         
         var converseService = new ConverseService(
             _aiChatServiceMock.Object,
             _textToSpeechServiceMock.Object,
             _loggerMock.Object, 
-            noDefaultConverseSettings);
+            Options.Create(noDefaultConverseSettings));
 
         var actual = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId);
         

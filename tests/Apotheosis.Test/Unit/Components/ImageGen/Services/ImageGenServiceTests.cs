@@ -1,12 +1,12 @@
-﻿using Apotheosis.Core.Components.ImageGen.Configuration;
-using Apotheosis.Core.Components.ImageGen.Interfaces;
-using Apotheosis.Core.Components.ImageGen.Models;
-using Apotheosis.Core.Components.ImageGen.Services;
+﻿using Apotheosis.Core.Features.ImageGen.Configuration;
+using Apotheosis.Core.Features.ImageGen.Interfaces;
+using Apotheosis.Core.Features.ImageGen.Models;
+using Apotheosis.Core.Features.ImageGen.Services;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Components.ImageGen.Services;
+namespace Apotheosis.Test.Unit.Features.ImageGen.Services;
 
 public sealed class ImageGenServiceTests : IDisposable
 {
@@ -23,7 +23,7 @@ public sealed class ImageGenServiceTests : IDisposable
     {
         _imageGenNetworkDriverMock = new Mock<IImageGenNetworkDriver>(MockBehavior.Strict);
 
-        _imageGenService = new ImageGenService(_imageGenNetworkDriverMock.Object, _imageGenSettings);
+        _imageGenService = new ImageGenService(_imageGenNetworkDriverMock.Object, Options.Create(_imageGenSettings));
     }
 
     public void Dispose()

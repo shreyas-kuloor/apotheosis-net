@@ -1,7 +1,7 @@
-using Apotheosis.Core.Components.ImageGen.Exceptions;
+using Apotheosis.Core.Features.ImageGen.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.ImageGen.Exceptions;
+namespace Apotheosis.Test.Unit.Features.ImageGen.Exceptions;
 
 public sealed class ImageGenNetworkExceptionTests
 {

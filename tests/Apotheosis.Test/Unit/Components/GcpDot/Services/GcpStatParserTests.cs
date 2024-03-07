@@ -1,8 +1,8 @@
-﻿using Apotheosis.Core.Components.GCPDot.Models;
-using Apotheosis.Core.Components.GCPDot.Services;
+﻿using Apotheosis.Core.Features.GcpDot.Models;
+using Apotheosis.Core.Features.GcpDot.Services;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.GcpDot.Services;
+namespace Apotheosis.Test.Unit.Features.GcpDot.Services;
 
 public sealed class GcpStatParserTests
 {

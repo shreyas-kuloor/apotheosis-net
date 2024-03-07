@@ -1,7 +1,7 @@
-using Apotheosis.Core.Components.AiChat.Exceptions;
+using Apotheosis.Core.Features.AiChat.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.AiChat.Exceptions;
+namespace Apotheosis.Test.Unit.Features.AiChat.Exceptions;
 
 public sealed class AiThreadChannelStoreExceptionTests
 {

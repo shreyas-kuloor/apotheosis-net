@@ -1,10 +1,10 @@
-﻿using Apotheosis.Core.Components.GCPDot.Interfaces;
-using Apotheosis.Core.Components.GCPDot.Services;
+﻿using Apotheosis.Core.Features.GcpDot.Interfaces;
+using Apotheosis.Core.Features.GcpDot.Services;
 using FluentAssertions;
 using Moq;
 using SixLabors.ImageSharp;
 
-namespace Apotheosis.Test.Unit.Components.GcpDot.Services;
+namespace Apotheosis.Test.Unit.Features.GcpDot.Services;
 
 public sealed class GcpDotServiceTests : IDisposable
 {

@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Apotheosis.Core.Components.GCPDot.Configuration;
-using Apotheosis.Core.Components.GCPDot.Exceptions;
-using Apotheosis.Core.Components.GCPDot.Network;
+using Apotheosis.Core.Features.GcpDot.Configuration;
+using Apotheosis.Core.Features.GcpDot.Exceptions;
+using Apotheosis.Core.Features.GcpDot.Network;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
-namespace Apotheosis.Test.Unit.Components.GcpDot.Network;
+namespace Apotheosis.Test.Unit.Features.GcpDot.Network;
 
 public sealed class GcpDotNetworkDriverTests
 {
@@ -31,7 +31,7 @@ public sealed class GcpDotNetworkDriverTests
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _gcpDotNetworkDriver = new GcpDotNetworkDriver(httpClient, _gcpDotSettings);
+        _gcpDotNetworkDriver = new GcpDotNetworkDriver(httpClient, Options.Create(_gcpDotSettings));
     }
     
     [Fact]

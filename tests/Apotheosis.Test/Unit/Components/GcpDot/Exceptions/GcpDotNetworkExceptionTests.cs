@@ -1,7 +1,7 @@
-using Apotheosis.Core.Components.GCPDot.Exceptions;
+using Apotheosis.Core.Features.GcpDot.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.GcpDot.Exceptions;
+namespace Apotheosis.Test.Unit.Features.GcpDot.Exceptions;
 
 public sealed class GcpDotNetworkExceptionTests
 {

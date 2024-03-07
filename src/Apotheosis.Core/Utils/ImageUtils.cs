@@ -1,5 +1,6 @@
 ﻿using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
+using Color = SixLabors.ImageSharp.Color;
 
 namespace Apotheosis.Core.Utils;
 

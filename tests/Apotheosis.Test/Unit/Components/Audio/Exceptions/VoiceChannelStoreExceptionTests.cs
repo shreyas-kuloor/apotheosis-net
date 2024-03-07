@@ -1,7 +1,7 @@
-using Apotheosis.Core.Components.Audio.Exceptions;
+using Apotheosis.Core.Features.Audio.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.Audio.Exceptions;
+namespace Apotheosis.Test.Unit.Features.Audio.Exceptions;
 
 public sealed class VoiceChannelStoreExceptionTests
 {

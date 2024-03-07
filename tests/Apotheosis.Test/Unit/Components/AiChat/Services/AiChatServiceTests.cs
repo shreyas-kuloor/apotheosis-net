@@ -1,12 +1,12 @@
-﻿using Apotheosis.Core.Components.AiChat.Configuration;
-using Apotheosis.Core.Components.AiChat.Interfaces;
-using Apotheosis.Core.Components.AiChat.Models;
-using Apotheosis.Core.Components.AiChat.Services;
+﻿using Apotheosis.Core.Features.AiChat.Configuration;
+using Apotheosis.Core.Features.AiChat.Interfaces;
+using Apotheosis.Core.Features.AiChat.Models;
+using Apotheosis.Core.Features.AiChat.Services;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Components.AiChat.Services;
+namespace Apotheosis.Test.Unit.Features.AiChat.Services;
 
 public sealed class AiChatServiceTests : IDisposable
 {
@@ -23,7 +23,7 @@ public sealed class AiChatServiceTests : IDisposable
     {
         _aiChatNetworkDriverMock = new Mock<IAiChatNetworkDriver>(MockBehavior.Strict);
 
-        _aiChatService = new AiChatService(_aiChatNetworkDriverMock.Object, _aiChatSettings);
+        _aiChatService = new AiChatService(_aiChatNetworkDriverMock.Object, Options.Create(_aiChatSettings));
     }
 
     public void Dispose()

@@ -1,9 +1,9 @@
-﻿using Apotheosis.Core.Components.Audio.Exceptions;
-using Apotheosis.Core.Components.Audio.Services;
+﻿using Apotheosis.Core.Features.Audio.Exceptions;
+using Apotheosis.Core.Features.Audio.Services;
 using FluentAssertions;
 using NetCord.Gateway.Voice;
 
-namespace Apotheosis.Test.Unit.Components.Audio.Services;
+namespace Apotheosis.Test.Unit.Features.Audio.Services;
 
 public sealed class VoiceClientServiceTests
 {

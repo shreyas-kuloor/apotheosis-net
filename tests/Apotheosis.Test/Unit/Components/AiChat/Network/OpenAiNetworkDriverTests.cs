@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Apotheosis.Core.Components.AiChat.Configuration;
-using Apotheosis.Core.Components.AiChat.Exceptions;
-using Apotheosis.Core.Components.AiChat.Network;
+using Apotheosis.Core.Features.AiChat.Configuration;
+using Apotheosis.Core.Features.AiChat.Exceptions;
+using Apotheosis.Core.Features.AiChat.Network;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
-namespace Apotheosis.Test.Unit.Components.AiChat.Network;
+namespace Apotheosis.Test.Unit.Features.AiChat.Network;
 
 public sealed class OpenAiNetworkDriverTests
 {
@@ -31,7 +31,7 @@ public sealed class OpenAiNetworkDriverTests
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _aiChatNetworkDriver = new OpenAiNetworkDriver(httpClient, _aiChatSettings);
+        _aiChatNetworkDriver = new OpenAiNetworkDriver(httpClient, Options.Create(_aiChatSettings));
     }
     
     [Fact]

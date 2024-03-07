@@ -1,7 +1,7 @@
-using Apotheosis.Core.Components.TextToSpeech.Exceptions;
+using Apotheosis.Core.Features.TextToSpeech.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Components.TextToSpeech.Exceptions;
+namespace Apotheosis.Test.Unit.Features.TextToSpeech.Exceptions;
 
 public sealed class TextToSpeechNetworkExceptionTests
 {

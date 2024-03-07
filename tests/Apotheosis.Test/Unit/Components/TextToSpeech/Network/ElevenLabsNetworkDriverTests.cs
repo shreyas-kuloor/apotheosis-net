@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Apotheosis.Core.Components.TextToSpeech.Configuration;
-using Apotheosis.Core.Components.TextToSpeech.Exceptions;
-using Apotheosis.Core.Components.TextToSpeech.Network;
+using Apotheosis.Core.Features.TextToSpeech.Configuration;
+using Apotheosis.Core.Features.TextToSpeech.Exceptions;
+using Apotheosis.Core.Features.TextToSpeech.Network;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
-namespace Apotheosis.Test.Unit.Components.TextToSpeech.Network;
+namespace Apotheosis.Test.Unit.Features.TextToSpeech.Network;
 
 public sealed class ElevenLabsNetworkDriverTests
 {
@@ -31,7 +31,7 @@ public sealed class ElevenLabsNetworkDriverTests
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _elevenLabsNetworkDriver = new ElevenLabsNetworkDriver(httpClient, _textToSpeechSettings);
+        _elevenLabsNetworkDriver = new ElevenLabsNetworkDriver(httpClient, Options.Create(_textToSpeechSettings));
     }
 
     [Fact]

@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Apotheosis.Core.Components.ImageGen.Configuration;
-using Apotheosis.Core.Components.ImageGen.Exceptions;
-using Apotheosis.Core.Components.ImageGen.Network;
+using Apotheosis.Core.Features.ImageGen.Configuration;
+using Apotheosis.Core.Features.ImageGen.Exceptions;
+using Apotheosis.Core.Features.ImageGen.Network;
 using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
-namespace Apotheosis.Test.Unit.Components.ImageGen.Network;
+namespace Apotheosis.Test.Unit.Features.ImageGen.Network;
 
 public sealed class StableDiffusionNetworkDriverTests
 {
@@ -31,7 +31,7 @@ public sealed class StableDiffusionNetworkDriverTests
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         
         var httpClient = new HttpClient(_mockHandler.Object);
-        _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, _imageGenSettings);
+        _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, Options.Create(_imageGenSettings));
     }
 
     [Fact]

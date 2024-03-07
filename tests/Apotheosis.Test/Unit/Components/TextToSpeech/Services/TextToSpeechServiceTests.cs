@@ -1,11 +1,11 @@
-﻿using Apotheosis.Core.Components.TextToSpeech.Configuration;
-using Apotheosis.Core.Components.TextToSpeech.Interfaces;
-using Apotheosis.Core.Components.TextToSpeech.Models;
-using Apotheosis.Core.Components.TextToSpeech.Services;
+﻿using Apotheosis.Core.Features.TextToSpeech.Configuration;
+using Apotheosis.Core.Features.TextToSpeech.Interfaces;
+using Apotheosis.Core.Features.TextToSpeech.Models;
+using Apotheosis.Core.Features.TextToSpeech.Services;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Components.TextToSpeech.Services;
+namespace Apotheosis.Test.Unit.Features.TextToSpeech.Services;
 
 public sealed class TextToSpeechServiceTests : IDisposable
 {
@@ -24,7 +24,7 @@ public sealed class TextToSpeechServiceTests : IDisposable
     {
         _textToSpeechNetworkDriverMock = new Mock<ITextToSpeechNetworkDriver>(MockBehavior.Strict);
         _textToSpeechService = new TextToSpeechService(
-            _textToSpeechSettings, 
+            Options.Create(_textToSpeechSettings), 
             _textToSpeechNetworkDriverMock.Object);
     }
 

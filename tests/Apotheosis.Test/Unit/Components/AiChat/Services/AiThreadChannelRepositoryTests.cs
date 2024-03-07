@@ -1,11 +1,11 @@
-﻿using Apotheosis.Core.Components.AiChat.Exceptions;
-using Apotheosis.Core.Components.AiChat.Models;
-using Apotheosis.Core.Components.AiChat.Services;
-using Apotheosis.Core.Components.DateTime.Interfaces;
+﻿using Apotheosis.Core.Features.AiChat.Models;
+using Apotheosis.Core.Features.AiChat.Exceptions;
+using Apotheosis.Core.Features.AiChat.Services;
+using Apotheosis.Core.Features.DateTime.Interfaces;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Components.AiChat.Services;
+namespace Apotheosis.Test.Unit.Features.AiChat.Services;
 
 public sealed class AiThreadChannelRepositoryTests : IDisposable
 {
