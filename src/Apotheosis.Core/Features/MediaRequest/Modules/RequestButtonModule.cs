@@ -1,5 +1,4 @@
 ﻿using Apotheosis.Core.Features.MediaRequest.Interfaces;
-using Apotheosis.Core.Features.MediaRequest.Models.Radarr.Request;
 using NetCord.Rest;
 using NetCord.Services.ComponentInteractions;
 

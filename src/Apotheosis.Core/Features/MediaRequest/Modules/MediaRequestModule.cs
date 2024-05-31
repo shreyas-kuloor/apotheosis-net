@@ -1,14 +1,28 @@
-﻿using Apotheosis.Core.Features.MediaRequest.Interfaces;
+﻿using Apotheosis.Core.Features.FeatureFlags.Configuration;
+using Apotheosis.Core.Features.MediaRequest.Interfaces;
 using NetCord.Rest;
 
 namespace Apotheosis.Core.Features.MediaRequest.Modules;
 
 [SlashCommand("request", "Request movies and shows to be added to Plex.")]
-public sealed class MediaRequestModule(IMediaRequestService mediaRequestService) : ApplicationCommandModule<SlashCommandContext>
+public sealed class MediaRequestModule(
+    IMediaRequestService mediaRequestService,
+    IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
+    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
+
     [SubSlashCommand("movie", "Request a movie to be added to Plex.")]
     public async Task RequestMovieAsync(string term)
     {
+        if (!featureFlagSettings.RequestMovieEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
         var movies = await mediaRequestService.SearchMovies(term);
 
@@ -28,6 +42,15 @@ public sealed class MediaRequestModule(IMediaRequestService mediaRequestService)
     [SubSlashCommand("series", "Request a series to be added to Plex.")]
     public async Task RequestSeriesAsync(string term)
     {
+        if (!featureFlagSettings.RequestSeriesEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
         var series = await mediaRequestService.SearchSeries(term);
 

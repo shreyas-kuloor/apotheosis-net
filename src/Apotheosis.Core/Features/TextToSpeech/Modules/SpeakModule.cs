@@ -1,4 +1,5 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
+using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Apotheosis.Core.Features.TextToSpeech.Interfaces;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
@@ -8,12 +9,24 @@ namespace Apotheosis.Core.Features.TextToSpeech.Modules;
 public sealed class SpeakModule(
     IAudioStreamService audioStreamService,
     ITextToSpeechService textToSpeechService,
-    IVoiceClientService voiceClientService)
+    IVoiceClientService voiceClientService,
+    IOptions<FeatureFlagSettings> featureFlagOptions)
     : ApplicationCommandModule<SlashCommandContext>
 {
+    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
+
     [SlashCommand("speak", "Invite the bot to speak a prompt using a voice of your choice.")]
     public async Task SpeakAsync([SlashCommandParameter(Name = "voice_name")] string voiceName, string prompt)
     {
+        if (!featureFlagSettings.SpeakEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;
 
@@ -109,6 +122,15 @@ public sealed class SpeakModule(
     [SlashCommand("voices", "Get the list of all supported voices for the /speak and /converse commands.")]
     public async Task GetVoicesAsync()
     {
+        if (!featureFlagSettings.VoicesEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         var voices = await textToSpeechService.GetVoicesAsync();
 
         var voicesString = $"**Available Voices:** {string.Join(", ", voices.Select(v => v.VoiceName))}";

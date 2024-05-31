@@ -1,14 +1,28 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
+using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
 
 namespace Apotheosis.Core.Features.JoinLeave.Modules;
 
-public sealed class JoinLeaveModule(IVoiceClientService voiceClientService) : ApplicationCommandModule<SlashCommandContext>
+public sealed class JoinLeaveModule(
+    IVoiceClientService voiceClientService,
+    IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
+    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
+
     [SlashCommand("join", "Invites the bot to join your voice channel.")]
     public async Task JoinVoiceAsync()
     {
+        if (!featureFlagSettings.JoinEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         var client = Context.Client;
         var currentUser = await client.Rest.GetCurrentUserAsync();
         var guild = Context.Guild!;
@@ -66,6 +80,15 @@ public sealed class JoinLeaveModule(IVoiceClientService voiceClientService) : Ap
     [SlashCommand("leave", "Makes the bot leave your voice channel.")]
     public async Task LeaveVoiceAsync()
     {
+        if (!featureFlagSettings.LeaveEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         var client = Context.Client;
         var currentUser = await client.Rest.GetCurrentUserAsync();
         var guild = Context.Guild!;

@@ -1,5 +1,6 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
 using Apotheosis.Core.Features.Converse.Interfaces;
+using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Apotheosis.Core.Features.TextToSpeech.Interfaces;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
@@ -10,12 +11,24 @@ public sealed class ConverseModule(
     IAudioStreamService audioStreamService,
     IConverseService converseService,
     ITextToSpeechService textToSpeechService,
-    IVoiceClientService voiceClientService)
+    IVoiceClientService voiceClientService,
+    IOptions<FeatureFlagSettings> featureFlagOptions)
     : ApplicationCommandModule<SlashCommandContext>
 {
+    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
+
     [SlashCommand("converse", "Invite the bot to respond to a prompt using a voice of your choice.")]
     public async Task ConverseAsync([SlashCommandParameter(Name = "voice_name")] string voiceName, string prompt)
     {
+        if (!featureFlagSettings.ConverseEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         await RespondAsync(InteractionCallback.DeferredMessage());
         var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;

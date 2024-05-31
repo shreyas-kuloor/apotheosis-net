@@ -29,6 +29,7 @@ builder.ConfigureServices(services =>
     services.AddAiChatServices(configuration);
     services.AddConverseServices(configuration);
     services.AddMediaRequestServices(configuration);
+    services.AddFeatureFlagServices(configuration);
     services.AddGatewayEventHandlers(typeof(Program).Assembly);
     services.AddServicesWithAttributes(typeof(Program).Assembly);
 });

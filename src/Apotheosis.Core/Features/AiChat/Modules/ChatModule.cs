@@ -3,6 +3,7 @@ using Apotheosis.Core.Features.AiChat.Exceptions;
 using Apotheosis.Core.Features.AiChat.Interfaces;
 using Apotheosis.Core.Features.AiChat.Models;
 using Apotheosis.Core.Features.DateTime.Interfaces;
+using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using NetCord.Rest;
 using Color = NetCord.Color;
 
@@ -12,14 +13,25 @@ public sealed class ChatModule(
     IAiChatService aiChatService,
     IAiThreadChannelRepository aiThreadChannelRepository,
     IOptions<AiChatSettings> aiChatOptions,
+    IOptions<FeatureFlagSettings> featureFlagOptions,
     IDateTimeService dateTimeService)
     : ApplicationCommandModule<SlashCommandContext>
 {
     readonly AiChatSettings _aiChatSettings = aiChatOptions.Value;
+    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
 
     [SlashCommand("chat", "Chat with the bot.")]
     public async Task ChatAsync(string prompt)
     {
+        if (!featureFlagSettings.ChatEnabled)
+        {
+            await RespondAsync(InteractionCallback.Message(
+                new InteractionMessageProperties()
+                .WithContent("This command is currently disabled. Please try again later!")
+                .WithFlags(MessageFlags.Ephemeral)));
+            return;
+        }
+
         if (Context.Channel is GuildThread)
         {
             await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
