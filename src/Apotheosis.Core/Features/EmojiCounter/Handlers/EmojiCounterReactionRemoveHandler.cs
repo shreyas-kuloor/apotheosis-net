@@ -9,9 +9,9 @@ public sealed class EmojiCounterReactionRemoveHandler(
 {
     public async ValueTask HandleAsync(MessageReactionRemoveEventArgs args)
     {
-        if (args.GuildId != null && !args.Emoji.IsStandard)
+        if (args.GuildId != null && args.Emoji.Id.HasValue)
         {
-            await emojiCounterService.DecrementEmojiCountAsync(args.GuildId.Value, args.Emoji.Id);
+            await emojiCounterService.DecrementEmojiCountAsync(args.GuildId.Value, args.Emoji.Id.Value);
         }
     }
 }

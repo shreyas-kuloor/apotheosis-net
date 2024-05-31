@@ -26,7 +26,7 @@ public sealed class AiThreadChannelRepository(IDateTimeService dateTimeService) 
         var nowDateTimeOffset = dateTimeService.UtcNow;
         var expiredThreadChannels = _aiThreadChannelDictionary.Where(tc => tc.Value.Expiration < nowDateTimeOffset);
 
-        var successes = expiredThreadChannels.Select(tc => _aiThreadChannelDictionary.TryRemove(tc));
+        var successes = expiredThreadChannels.Select(_aiThreadChannelDictionary.TryRemove);
 
         if (successes.Any(s => !s))
         {

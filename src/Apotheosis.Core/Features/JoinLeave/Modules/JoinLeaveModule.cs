@@ -41,7 +41,6 @@ public sealed class JoinLeaveModule(IVoiceClientService voiceClientService) : Ap
         if (!voiceClientService.TryGetVoiceClient(voiceChannelId, out var voiceClient))
         {
             voiceClient = await client.JoinVoiceChannelAsync(
-                client.ApplicationId,
                 guild.Id,
                 voiceChannelId);
 

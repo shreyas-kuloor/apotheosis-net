@@ -5,13 +5,13 @@ using Apotheosis.Core.Features.TextToSpeech.Services;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Features.TextToSpeech.Services;
+namespace Apotheosis.Test.Unit.Components.TextToSpeech.Services;
 
 public sealed class TextToSpeechServiceTests : IDisposable
 {
     private readonly Mock<ITextToSpeechNetworkDriver> _textToSpeechNetworkDriverMock;
     private readonly TextToSpeechService _textToSpeechService;
-    
+
     private readonly TextToSpeechSettings _textToSpeechSettings = new()
     {
         ElevenLabsModelId = "test-model",
@@ -24,7 +24,7 @@ public sealed class TextToSpeechServiceTests : IDisposable
     {
         _textToSpeechNetworkDriverMock = new Mock<ITextToSpeechNetworkDriver>(MockBehavior.Strict);
         _textToSpeechService = new TextToSpeechService(
-            Options.Create(_textToSpeechSettings), 
+            Options.Create(_textToSpeechSettings),
             _textToSpeechNetworkDriverMock.Object);
     }
 
@@ -39,7 +39,7 @@ public sealed class TextToSpeechServiceTests : IDisposable
         const string prompt = "test prompt";
         const string voiceId = "voice";
         var stream = new MemoryStream();
-        
+
         _textToSpeechNetworkDriverMock.Setup(d => d.SendRequestReceiveStreamAsync(
             $"/v1/text-to-speech/{voiceId}/stream",
             HttpMethod.Post,
@@ -55,7 +55,7 @@ public sealed class TextToSpeechServiceTests : IDisposable
 
         actual.Should().BeSameAs(stream);
     }
-    
+
     [Fact]
     public async Task GetVoicesAsync_ReturnsEnumerableOfVoiceDto_GivenNetworkDriverReturnsResponse()
     {
@@ -89,10 +89,10 @@ public sealed class TextToSpeechServiceTests : IDisposable
                 VoiceName = "Voice 2"
             }
         };
-        
+
         _textToSpeechNetworkDriverMock.Setup(d => d.SendRequestAsync<VoicesResponse>(
-                "/v1/voices", 
-                HttpMethod.Get, 
+                "/v1/voices",
+                HttpMethod.Get,
                 null))
             .ReturnsAsync(voicesResponse);
 

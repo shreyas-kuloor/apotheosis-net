@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Apotheosis.Core.Features.EmojiCounter.Models;
 using Apotheosis.Core.Features.EmojiCounter.Services;
 
-namespace Apotheosis.Test.Unit.Features.EmojiCounter.Services;
+namespace Apotheosis.Test.Unit.Components.EmojiCounter.Services;
 
 public sealed class EmojiCounterServiceTests : IDisposable
 {
@@ -146,7 +146,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
     [Fact]
     public async Task GetEmojiCountsForGuildAsync_GetsAllEmojiCountsForProvidedGuildId_GivenExistingEmojiUsagesForGuildId()
     {
-        List<EmojiUsage> existingEmojiUsages = 
+        List<EmojiUsage> existingEmojiUsages =
         [
             new EmojiUsage
             {
@@ -171,7 +171,7 @@ public sealed class EmojiCounterServiceTests : IDisposable
             },
         ];
 
-        List<EmojiCounterDto> expectedEmojiUsages = 
+        List<EmojiCounterDto> expectedEmojiUsages =
         [
             new EmojiCounterDto
             {

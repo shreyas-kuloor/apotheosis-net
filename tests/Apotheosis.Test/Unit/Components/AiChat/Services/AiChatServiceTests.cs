@@ -6,13 +6,13 @@ using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Features.AiChat.Services;
+namespace Apotheosis.Test.Unit.Components.AiChat.Services;
 
 public sealed class AiChatServiceTests : IDisposable
 {
     private readonly Mock<IAiChatNetworkDriver> _aiChatNetworkDriverMock;
     private readonly AiChatService _aiChatService;
-    
+
     private readonly AiChatSettings _aiChatSettings = new()
     {
         OpenAiModel = "model",
@@ -36,7 +36,7 @@ public sealed class AiChatServiceTests : IDisposable
     {
         const string initialPrompt = "example prompt";
         const string responseMessageContent = "example response";
-        
+
         var expectedRequest = new AiChatRequest
         {
             Model = _aiChatSettings.OpenAiModel,
@@ -93,7 +93,7 @@ public sealed class AiChatServiceTests : IDisposable
         _aiChatNetworkDriverMock
             .Setup(d => d.SendRequestAsync<AiChatResponse>(
                 "/v1/chat/completions",
-                HttpMethod.Post, 
+                HttpMethod.Post,
                 Match.Create<AiChatRequest>(r => MatchUtils.MatchBasicObject(r, expectedRequest))))
             .ReturnsAsync(response);
 

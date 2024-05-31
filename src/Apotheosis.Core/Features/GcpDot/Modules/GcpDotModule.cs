@@ -15,7 +15,7 @@ public sealed class GcpDotModule(IGcpDotService gcpDotService) : ApplicationComm
         var gcpDotImage = ImageUtils.CreateCircleImage(centerColor, edgeColor, 50);
 
         using var ms = new MemoryStream();
-        await gcpDotImage.SaveAsync(ms, PngFormat.Instance);
+        await gcpDotImage.SaveAsync(ms, new PngEncoder());
         ms.Seek(0, SeekOrigin.Begin);
 
         await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties().AddAttachments(new AttachmentProperties("gcp_dot.png", ms))));

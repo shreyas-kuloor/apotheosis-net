@@ -6,3 +6,4 @@
 - Converse command thread functionality
 - Receive voice for conversation with AI
 - Emoji counter - Support standard emojis, add filters to command to filter out standard emojis, only show emojis from current guild
+- AI Song request

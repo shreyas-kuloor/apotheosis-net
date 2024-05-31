@@ -1,7 +1,7 @@
 using Apotheosis.Core.Features.AiChat.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Features.AiChat.Exceptions;
+namespace Apotheosis.Test.Unit.Components.AiChat.Exceptions;
 
 public sealed class AiThreadChannelStoreExceptionTests
 {
@@ -14,14 +14,14 @@ public sealed class AiThreadChannelStoreExceptionTests
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeNull();
     }
-    
+
     [Fact]
     public void ConstructorWithMessageAndInnerException_CreatesNewAiThreadChannelStoreException()
     {
         const string message = "AI Thread Channel Store Exception";
         var innerException = new Exception();
         var exception = new AiThreadChannelStoreException(message, innerException);
-        
+
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
     }

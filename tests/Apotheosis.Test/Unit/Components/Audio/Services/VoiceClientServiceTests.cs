@@ -3,7 +3,7 @@ using Apotheosis.Core.Features.Audio.Services;
 using FluentAssertions;
 using NetCord.Gateway.Voice;
 
-namespace Apotheosis.Test.Unit.Features.Audio.Services;
+namespace Apotheosis.Test.Unit.Components.Audio.Services;
 
 public sealed class VoiceClientServiceTests
 {
@@ -18,19 +18,19 @@ public sealed class VoiceClientServiceTests
         const string endpoint = "endpoint";
         const ulong guildId = 321;
         const string token = "token";
-        
+
         var voiceClient = new VoiceClient(userId, sessionId, endpoint, guildId, token);
-        
+
         var exception = Record.Exception(() => _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient));
-        
+
         exception.Should().BeNull();
-        
+
         var voiceClientExists = _voiceClientService.TryGetVoiceClient(voiceChannelId, out var existingVoiceClient);
 
         voiceClientExists.Should().BeTrue();
         existingVoiceClient.Should().BeSameAs(voiceClient);
     }
-    
+
     [Fact]
     public void StoreVoiceClient_ThrowsVoiceChannelStoreException_GivenUnsuccessfulAdd()
     {
@@ -40,17 +40,17 @@ public sealed class VoiceClientServiceTests
         const string endpoint = "endpoint";
         const ulong guildId = 321;
         const string token = "token";
-        
+
         var voiceClient = new VoiceClient(userId, sessionId, endpoint, guildId, token);
 
         _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
 
-       var actual = () => _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
+        var actual = () => _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
 
-       actual.Should().Throw<VoiceChannelStoreException>()
-           .Where(e => e.Message == "Voice channel already exists for guild ID.");
+        actual.Should().Throw<VoiceChannelStoreException>()
+            .Where(e => e.Message == "Voice channel already exists for guild ID.");
     }
-    
+
     [Fact]
     public void TryGetVoiceClient_ReturnsTrueAndVoiceClient_GivenVoiceClientExists()
     {
@@ -60,7 +60,7 @@ public sealed class VoiceClientServiceTests
         const string endpoint = "endpoint";
         const ulong guildId = 321;
         const string token = "token";
-        
+
         var voiceClient = new VoiceClient(userId, sessionId, endpoint, guildId, token);
 
         _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
@@ -70,7 +70,7 @@ public sealed class VoiceClientServiceTests
         actual.Should().BeTrue();
         actualVoiceClient.Should().BeSameAs(voiceClient);
     }
-    
+
     [Fact]
     public void TryGetVoiceClient_ReturnsFalseAndNullVoiceClient_GivenVoiceClientDoesNotExist()
     {
@@ -81,7 +81,7 @@ public sealed class VoiceClientServiceTests
         actual.Should().BeFalse();
         actualVoiceClient.Should().BeNull();
     }
-    
+
     [Fact]
     public void TryRemoveVoiceClient_ReturnsTrueAndRemovesVoiceClient_GivenVoiceClientExists()
     {
@@ -91,7 +91,7 @@ public sealed class VoiceClientServiceTests
         const string endpoint = "endpoint";
         const ulong guildId = 321;
         const string token = "token";
-        
+
         var voiceClient = new VoiceClient(userId, sessionId, endpoint, guildId, token);
 
         _voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
@@ -106,7 +106,7 @@ public sealed class VoiceClientServiceTests
         voiceClientStillExists.Should().BeFalse();
         existingVoiceClient.Should().BeNull();
     }
-    
+
     [Fact]
     public void TryRemoveVoiceClient_ReturnsFalseAndNullVoiceClient_GivenVoiceClientDoesNotExist()
     {

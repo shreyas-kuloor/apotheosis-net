@@ -1,7 +1,7 @@
 using Apotheosis.Core.Features.AiChat.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Features.AiChat.Exceptions;
+namespace Apotheosis.Test.Unit.Components.AiChat.Exceptions;
 
 public sealed class AiChatNetworkExceptionTests
 {
@@ -14,18 +14,18 @@ public sealed class AiChatNetworkExceptionTests
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeNull();
     }
-    
+
     [Fact]
     public void ConstructorWithMessageAndInnerException_CreatesNewAiChatNetworkException()
     {
         const string message = "AI Chat Network Exception";
         var innerException = new Exception();
         var exception = new AiChatNetworkException(message, innerException);
-        
+
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
     }
-    
+
     [Fact]
     public void ConstructorWithMessageAndReasonAndInnerException_CreatesNewAiChatNetworkException()
     {
@@ -33,7 +33,7 @@ public sealed class AiChatNetworkExceptionTests
         const AiChatNetworkException.ErrorReason reason = AiChatNetworkException.ErrorReason.Unknown;
         var innerException = new Exception();
         var exception = new AiChatNetworkException(message, reason, innerException);
-        
+
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
         exception.Reason.Should().Be(AiChatNetworkException.ErrorReason.Unknown);

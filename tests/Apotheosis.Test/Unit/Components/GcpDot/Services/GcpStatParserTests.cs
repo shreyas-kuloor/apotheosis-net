@@ -2,7 +2,7 @@
 using Apotheosis.Core.Features.GcpDot.Services;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Features.GcpDot.Services;
+namespace Apotheosis.Test.Unit.Components.GcpDot.Services;
 
 public sealed class GcpStatParserTests
 {

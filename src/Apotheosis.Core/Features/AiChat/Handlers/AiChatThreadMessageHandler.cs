@@ -24,7 +24,7 @@ public sealed class AiChatThreadMessageHandler(
                 // Convert IMessage to ThreadMessageDto, but ensure the first message, which is always an embed, is read in as a user message.
                 var threadContents = threadMessages
                     .OrderBy(m => m.Id)
-                    .Where(m => m.Interaction is null)
+                    .Where(m => m.InteractionMetadata is null)
                     .Select((m, index) => new MessageDto
                     {
                         Content = index == 0 ? activeThread.InitialMessageContent : m.Content,

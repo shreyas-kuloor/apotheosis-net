@@ -6,13 +6,13 @@ using Apotheosis.Test.Utils;
 using FluentAssertions;
 using Moq;
 
-namespace Apotheosis.Test.Unit.Features.ImageGen.Services;
+namespace Apotheosis.Test.Unit.Components.ImageGen.Services;
 
 public sealed class ImageGenServiceTests : IDisposable
 {
     private readonly Mock<IImageGenNetworkDriver> _imageGenNetworkDriverMock;
     private readonly ImageGenService _imageGenService;
-    
+
     private readonly ImageGenSettings _imageGenSettings = new()
     {
         StableDiffusionBaseUrl = new Uri("https://example.com/"),
@@ -30,14 +30,14 @@ public sealed class ImageGenServiceTests : IDisposable
     {
         _imageGenNetworkDriverMock.VerifyAll();
     }
-    
+
     [Fact]
     public async Task GenerateImageBase64FromPromptAsync_ReturnsBase64Image_GivenPromptAndSteps()
     {
         const string prompt = "prompt";
         const int samplingSteps = 100;
         const string imageString = "abc123";
-        
+
         var expectedImageGenRequest = new StableDiffusionTextRequest
         {
             Prompt = prompt,
@@ -54,8 +54,8 @@ public sealed class ImageGenServiceTests : IDisposable
 
         _imageGenNetworkDriverMock.Setup(d =>
             d.SendRequestAsync<StableDiffusionResponse>(
-                "/txt2img", 
-                HttpMethod.Post, 
+                "/txt2img",
+                HttpMethod.Post,
                 Match.Create<StableDiffusionTextRequest>(
                     r => MatchUtils.MatchBasicObject(r, expectedImageGenRequest))))
             .ReturnsAsync(imageGenResponse);
@@ -64,13 +64,13 @@ public sealed class ImageGenServiceTests : IDisposable
 
         actual.Should().BeEquivalentTo(imageString);
     }
-    
+
     [Fact]
     public async Task GenerateImageBase64FromPromptAsync_ReturnsBase64Image_GivenPromptAndNullSteps()
     {
         const string prompt = "prompt";
         const string imageString = "abc123";
-        
+
         var expectedImageGenRequest = new StableDiffusionTextRequest
         {
             Prompt = prompt,
@@ -87,8 +87,8 @@ public sealed class ImageGenServiceTests : IDisposable
 
         _imageGenNetworkDriverMock.Setup(d =>
                 d.SendRequestAsync<StableDiffusionResponse>(
-                    "/txt2img", 
-                    HttpMethod.Post, 
+                    "/txt2img",
+                    HttpMethod.Post,
                     Match.Create<StableDiffusionTextRequest>(
                         r => MatchUtils.MatchBasicObject(r, expectedImageGenRequest))))
             .ReturnsAsync(imageGenResponse);

@@ -73,7 +73,6 @@ public sealed class ConverseModule(
         if (!voiceClientService.TryGetVoiceClient(voiceChannelId, out var voiceClient))
         {
             voiceClient = await client.JoinVoiceChannelAsync(
-                client.ApplicationId,
                 guild.Id,
                 voiceChannelId);
 

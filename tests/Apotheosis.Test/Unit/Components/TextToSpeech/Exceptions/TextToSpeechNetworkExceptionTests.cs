@@ -1,7 +1,7 @@
 using Apotheosis.Core.Features.TextToSpeech.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Features.TextToSpeech.Exceptions;
+namespace Apotheosis.Test.Unit.Components.TextToSpeech.Exceptions;
 
 public sealed class TextToSpeechNetworkExceptionTests
 {
@@ -14,14 +14,14 @@ public sealed class TextToSpeechNetworkExceptionTests
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeNull();
     }
-    
+
     [Fact]
     public void ConstructorWithMessageAndInnerException_CreatesNewTextToSpeechNetworkException()
     {
         const string message = "Text to speech Network Exception";
         var innerException = new Exception();
         var exception = new TextToSpeechNetworkException(message, innerException);
-        
+
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
     }

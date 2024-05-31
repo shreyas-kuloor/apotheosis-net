@@ -1,9 +1,6 @@
-﻿using Apotheosis.Core.Features.AiChat.Extensions;
-using Apotheosis.Core.Features.Converse.Extensions;
-using Apotheosis.Core.Features.GcpDot.Extensions;
-using Apotheosis.Core.Features.ImageGen.Extensions;
-using Apotheosis.Core.Features.Logging.Extensions;
-using Apotheosis.Core.Features.TextToSpeech.Extensions;
+﻿using Apotheosis.Core.Features.MediaRequest.Extensions;
+using NetCord.Hosting.Services.ComponentInteractions;
+using NetCord.Services.ComponentInteractions;
 
 var builder = Host.CreateDefaultBuilder(args)
     .UseDiscordGateway(options =>
@@ -13,7 +10,9 @@ var builder = Host.CreateDefaultBuilder(args)
             Intents = GatewayIntents.AllNonPrivileged | GatewayIntents.MessageContent
         };
     })
-    .UseApplicationCommandService<SlashCommandInteraction, SlashCommandContext>();
+    .UseApplicationCommands<SlashCommandInteraction, SlashCommandContext>()
+    .UseComponentInteractions<StringMenuInteraction, StringMenuInteractionContext>()
+    .UseComponentInteractions<ButtonInteraction, ButtonInteractionContext>();
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -29,6 +28,7 @@ builder.ConfigureServices(services =>
     services.AddImageGenServices(configuration);
     services.AddAiChatServices(configuration);
     services.AddConverseServices(configuration);
+    services.AddMediaRequestServices(configuration);
     services.AddGatewayEventHandlers(typeof(Program).Assembly);
     services.AddServicesWithAttributes(typeof(Program).Assembly);
 });

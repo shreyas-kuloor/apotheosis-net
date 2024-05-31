@@ -19,7 +19,7 @@ public sealed class VoiceChannelEmptyHandler(
         {
             var botUser = await discordClient.Rest.GetCurrentUserAsync();
 
-            var guild = discordClient.Cache.Guilds[voiceState.GuildId.GetValueOrDefault()];
+            var guild = discordClient.Cache.Guilds[voiceState.GuildId];
 
             if (!guild.VoiceStates.TryGetValue(botUser.Id, out var botVoiceState))
             {

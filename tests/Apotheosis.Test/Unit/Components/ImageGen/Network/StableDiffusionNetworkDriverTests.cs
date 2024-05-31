@@ -10,16 +10,16 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
-namespace Apotheosis.Test.Unit.Features.ImageGen.Network;
+namespace Apotheosis.Test.Unit.Components.ImageGen.Network;
 
 public sealed class StableDiffusionNetworkDriverTests
 {
     private const string RequestString = "request123";
     private const string ResponseString = "response123";
-    
+
     private readonly Mock<HttpMessageHandler> _mockHandler;
     private readonly StableDiffusionNetworkDriver _imageGenNetworkDriver;
-    
+
     private readonly ImageGenSettings _imageGenSettings = new()
     {
         StableDiffusionBaseUrl = new Uri("https://example.com/"),
@@ -29,7 +29,7 @@ public sealed class StableDiffusionNetworkDriverTests
     public StableDiffusionNetworkDriverTests()
     {
         _mockHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-        
+
         var httpClient = new HttpClient(_mockHandler.Object);
         _imageGenNetworkDriver = new StableDiffusionNetworkDriver(httpClient, Options.Create(_imageGenSettings));
     }
@@ -39,7 +39,7 @@ public sealed class StableDiffusionNetworkDriverTests
     {
         var httpMethod = HttpMethod.Post;
         var response = new TestResponse { ResponseContent = ResponseString };
-        
+
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -50,32 +50,32 @@ public sealed class StableDiffusionNetworkDriverTests
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(m => 
+                ItExpr.Is<HttpRequestMessage>(m =>
                     m.Method == httpMethod
                     && m.Content == null),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
         var actual = await _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, null);
-        
+
         actual.Should().BeEquivalentTo(response);
-        
+
         _mockHandler.Protected().Verify(
             "SendAsync",
             Times.Exactly(1),
-            ItExpr.Is<HttpRequestMessage>(m => 
+            ItExpr.Is<HttpRequestMessage>(m =>
                 m.Method == httpMethod
                 && m.Content == null),
             ItExpr.IsAny<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndReturnsResponseData_GivenSuccessfulHttpRequestWithNonNullBody()
     {
         var httpMethod = HttpMethod.Post;
         var request = new TestRequest { RequestContent = RequestString };
         var response = new TestResponse { ResponseContent = ResponseString };
-        
+
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -87,14 +87,14 @@ public sealed class StableDiffusionNetworkDriverTests
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => 
+                    m =>
                         m.Method == httpMethod
                         && m.Content != null
                         && MatchUtils.MatchBasicObject(
-                            m.Content, 
+                            m.Content,
                             new StringContent(
-                                JsonConvert.SerializeObject(request), 
-                                Encoding.UTF8, 
+                                JsonConvert.SerializeObject(request),
+                                Encoding.UTF8,
                                 MediaTypeNames.Application.Json))),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
@@ -102,27 +102,27 @@ public sealed class StableDiffusionNetworkDriverTests
         var actual = await _imageGenNetworkDriver.SendRequestAsync<TestResponse>("/path", httpMethod, request);
 
         actual.Should().BeEquivalentTo(response);
-        
+
         _mockHandler.Protected().Verify(
             "SendAsync",
             Times.Exactly(1),
-            ItExpr.Is<HttpRequestMessage>(m => 
+            ItExpr.Is<HttpRequestMessage>(m =>
                 m.Method == httpMethod
                 && m.Content != null
                 && MatchUtils.MatchBasicObject(
-                    m.Content, 
+                    m.Content,
                     new StringContent(
-                        JsonConvert.SerializeObject(request), 
-                        Encoding.UTF8, 
+                        JsonConvert.SerializeObject(request),
+                        Encoding.UTF8,
                         MediaTypeNames.Application.Json))),
             ItExpr.IsAny<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsUnsuccessfulStatusCode()
     {
         var httpMethod = HttpMethod.Post;
-        
+
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.BadRequest,
@@ -133,7 +133,7 @@ public sealed class StableDiffusionNetworkDriverTests
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(m => 
+                ItExpr.Is<HttpRequestMessage>(m =>
                     m.Method == httpMethod
                     && m.Content == null),
                 ItExpr.IsAny<CancellationToken>())
@@ -144,21 +144,21 @@ public sealed class StableDiffusionNetworkDriverTests
 
         await actual.Should().ThrowAsync<ImageGenNetworkException>()
             .Where(e => e.Message == "Stable Diffusion returned a non-successful status code");
-        
+
         _mockHandler.Protected().Verify(
             "SendAsync",
             Times.Exactly(1),
-            ItExpr.Is<HttpRequestMessage>(m => 
+            ItExpr.Is<HttpRequestMessage>(m =>
                 m.Method == httpMethod
                 && m.Content == null),
             ItExpr.IsAny<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task SendRequestAsync_SendsRequestAndThrowsNetworkException_GivenHttpRequestWithNullBodyReturnsNonJsonResponse()
     {
         var httpMethod = HttpMethod.Post;
-        
+
         var mockResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -169,7 +169,7 @@ public sealed class StableDiffusionNetworkDriverTests
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(m => 
+                ItExpr.Is<HttpRequestMessage>(m =>
                     m.Method == httpMethod
                     && m.Content == null),
                 ItExpr.IsAny<CancellationToken>())
@@ -180,11 +180,11 @@ public sealed class StableDiffusionNetworkDriverTests
 
         await actual.Should().ThrowAsync<ImageGenNetworkException>()
             .Where(e => e.Message == "An error occured while sending the Stable Diffusion network request.");
-        
+
         _mockHandler.Protected().Verify(
             "SendAsync",
             Times.Exactly(1),
-            ItExpr.Is<HttpRequestMessage>(m => 
+            ItExpr.Is<HttpRequestMessage>(m =>
                 m.Method == httpMethod
                 && m.Content == null),
             ItExpr.IsAny<CancellationToken>());
@@ -195,7 +195,7 @@ public sealed class StableDiffusionNetworkDriverTests
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string? RequestContent { get; set; }
     }
-    
+
     private class TestResponse
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local

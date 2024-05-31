@@ -9,9 +9,9 @@ public sealed class EmojiCounterReactionAddHandler(
 {
     public async ValueTask HandleAsync(MessageReactionAddEventArgs args)
     {
-        if (args.GuildId != null && !args.Emoji.IsStandard)
+        if (args.GuildId != null && args.Emoji.Id.HasValue)
         {
-            await emojiCounterService.IncrementEmojiCountAsync(args.GuildId.Value, args.Emoji.Id, args.Emoji.Name);
+            await emojiCounterService.IncrementEmojiCountAsync(args.GuildId.Value, args.Emoji.Id.Value, args.Emoji.Name);
         }
     }
 }

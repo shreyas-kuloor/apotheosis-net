@@ -1,7 +1,7 @@
 using Apotheosis.Core.Features.ImageGen.Exceptions;
 using FluentAssertions;
 
-namespace Apotheosis.Test.Unit.Features.ImageGen.Exceptions;
+namespace Apotheosis.Test.Unit.Components.ImageGen.Exceptions;
 
 public sealed class ImageGenNetworkExceptionTests
 {
@@ -14,14 +14,14 @@ public sealed class ImageGenNetworkExceptionTests
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeNull();
     }
-    
+
     [Fact]
     public void ConstructorWithMessageAndInnerException_CreatesNewImageGenNetworkException()
     {
         const string message = "Image Gen Network Exception";
         var innerException = new Exception();
         var exception = new ImageGenNetworkException(message, innerException);
-        
+
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
     }
