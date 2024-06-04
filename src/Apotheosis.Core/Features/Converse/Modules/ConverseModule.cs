@@ -29,25 +29,22 @@ public sealed class ConverseModule(
             return;
         }
 
-        await RespondAsync(InteractionCallback.DeferredMessage());
+        await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
         var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;
 
         if (string.IsNullOrWhiteSpace(voiceId))
         {
-            await RespondAsync(InteractionCallback.Message(
-                new InteractionMessageProperties
+            await FollowupAsync(new InteractionMessageProperties
                 {
                     Content = $"{voiceName} is not valid. Please try again with a valid voice name. A list of voices can be retrieved with the /voices command",
                     Flags = MessageFlags.Ephemeral
-                }));
+                });
             return;
         }
 
         var client = Context.Client;
         var guild = Context.Guild!;
-
-        await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
 
         var voiceStream = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId);
         if (!guild.VoiceStates.TryGetValue(Context.User.Id, out var userVoiceState))

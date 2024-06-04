@@ -34,8 +34,8 @@ public class Movie
     [JsonProperty("isAvailable")]
     public bool IsAvailable { get; set; }
 
-    [JsonProperty("hasFile")]
-    public bool HasFile { get; set; }
+    [JsonProperty("movieFileId")]
+    public int MovieFileId { get; set; }
 
     [JsonProperty("monitored")]
     public bool Monitored { get; set; }

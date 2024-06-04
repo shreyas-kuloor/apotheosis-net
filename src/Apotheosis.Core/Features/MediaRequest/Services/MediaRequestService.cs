@@ -21,9 +21,9 @@ public sealed class MediaRequestService(
         var movieDtos = movies.Take(mediaRequestSettings.OptionCount).Select(m =>
         {
             MediaStatus status;
-            if (m.IsAvailable && m.HasFile && m.Monitored)
+            if (m.IsAvailable && m.MovieFileId > 0 && m.Monitored)
                 status = MediaStatus.Available;
-            else if (!m.IsAvailable && m.HasFile && m.Monitored)
+            else if (m.IsAvailable && m.MovieFileId == 0 && m.Monitored)
                 status = MediaStatus.Processing;
             else
                 status = MediaStatus.NotAdded;

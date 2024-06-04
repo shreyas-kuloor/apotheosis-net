@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
+using Newtonsoft.Json;
 
 namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr;
 

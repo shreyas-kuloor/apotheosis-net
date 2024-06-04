@@ -10,5 +10,5 @@ public sealed class RootFolder
     public bool Accessible { get; set; }
 
     [JsonProperty("freeSpace")]
-    public int FreeSpace { get; set; }
+    public long FreeSpace { get; set; }
 }

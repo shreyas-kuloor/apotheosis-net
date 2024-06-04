@@ -1,4 +1,5 @@
 ﻿using Apotheosis.Core.Features.MediaRequest.Interfaces;
+using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 using NetCord.Services.ComponentInteractions;
 
@@ -6,7 +7,8 @@ namespace Apotheosis.Core.Features.MediaRequest.Modules;
 public sealed class RequestButtonModule(
     IActiveMediaSelectionCache activeMediaSelectionCache, 
     IMediaRequestMessageCache mediaRequestMessageCache,
-    IMediaRequestService mediaRequestService) : ComponentInteractionModule<ButtonInteractionContext>
+    IMediaRequestService mediaRequestService,
+    ILogger<RequestButtonModule> logger) : ComponentInteractionModule<ButtonInteractionContext>
 {
     [ComponentInteraction("req-movie-button")]
     public async Task RequestMovieAsync()
@@ -33,8 +35,9 @@ public sealed class RequestButtonModule(
         {
             await mediaRequestService.RequestMovie(movieToRequest.Title, movieToRequest.TmdbId);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            logger.LogError(e, "Exception message: {Error}", e.Message);
             await FollowupAsync(
                 new InteractionMessageProperties()
                 .WithContent("Something went wrong when requesting the movie.")
