@@ -2,6 +2,7 @@
 using Apotheosis.Core.Features.MediaRequest.Interfaces;
 using Apotheosis.Core.Features.MediaRequest.Models;
 using Apotheosis.Core.Features.MediaRequest.Models.Radarr.Request;
+using Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Request;
 
 namespace Apotheosis.Core.Features.MediaRequest.Services;
 
@@ -113,7 +114,8 @@ public sealed class MediaRequestService(
             QualityProfileId = qualityProfiles.FirstOrDefault(q => q.Name == mediaRequestSettings.QualityProfileName)?.Id ?? 4,
             AddOptions = new()
             {
-                SearchForMovie = true,
+                SearchForMissingEpisodes = true,
+                SearchForCutoffUnmetEpisodes = true,
             },
         };
 

@@ -2,8 +2,8 @@
 using Apotheosis.Core.Features.MediaRequest.Configuration;
 using Apotheosis.Core.Features.MediaRequest.Exceptions;
 using Apotheosis.Core.Features.MediaRequest.Interfaces;
-using Apotheosis.Core.Features.MediaRequest.Models.Radarr.Request;
 using Apotheosis.Core.Features.MediaRequest.Models.Shared;
+using Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Request;
 using Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Response;
 using Newtonsoft.Json;
 

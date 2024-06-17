@@ -1,5 +1,5 @@
-﻿using Apotheosis.Core.Features.MediaRequest.Models.Radarr.Request;
-using Apotheosis.Core.Features.MediaRequest.Models.Shared;
+﻿using Apotheosis.Core.Features.MediaRequest.Models.Shared;
+using Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Request;
 using Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Response;
 
 namespace Apotheosis.Core.Features.MediaRequest.Interfaces;
