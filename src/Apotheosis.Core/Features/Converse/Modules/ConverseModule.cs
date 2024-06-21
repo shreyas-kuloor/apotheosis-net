@@ -1,7 +1,9 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
 using Apotheosis.Core.Features.Converse.Interfaces;
 using Apotheosis.Core.Features.FeatureFlags.Configuration;
+using Apotheosis.Core.Features.Logging.Interfaces;
 using Apotheosis.Core.Features.TextToSpeech.Interfaces;
+using Microsoft.Extensions.Logging;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
 
@@ -10,6 +12,7 @@ namespace Apotheosis.Core.Features.Converse.Modules;
 public sealed class ConverseModule(
     IAudioStreamService audioStreamService,
     IConverseService converseService,
+    ILogService<ConverseModule> logger,
     ITextToSpeechService textToSpeechService,
     IVoiceClientService voiceClientService,
     IOptions<FeatureFlagSettings> featureFlagOptions)
@@ -30,6 +33,8 @@ public sealed class ConverseModule(
         }
 
         await RespondAsync(InteractionCallback.DeferredMessage(MessageFlags.Ephemeral));
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /converse {voiceName} {prompt}");
         var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;
 

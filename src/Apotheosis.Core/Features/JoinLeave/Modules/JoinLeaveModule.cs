@@ -1,5 +1,7 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
 using Apotheosis.Core.Features.FeatureFlags.Configuration;
+using Apotheosis.Core.Features.Logging.Interfaces;
+using Microsoft.Extensions.Logging;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
 
@@ -7,6 +9,7 @@ namespace Apotheosis.Core.Features.JoinLeave.Modules;
 
 public sealed class JoinLeaveModule(
     IVoiceClientService voiceClientService,
+    ILogService<JoinLeaveModule> logger,
     IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
     readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
@@ -22,6 +25,8 @@ public sealed class JoinLeaveModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /join");
 
         var client = Context.Client;
         var currentUser = await client.Rest.GetCurrentUserAsync();
@@ -88,6 +93,8 @@ public sealed class JoinLeaveModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /leave");
 
         var client = Context.Client;
         var currentUser = await client.Rest.GetCurrentUserAsync();

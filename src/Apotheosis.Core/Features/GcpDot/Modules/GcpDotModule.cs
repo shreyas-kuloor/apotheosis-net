@@ -1,6 +1,8 @@
 ﻿using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Apotheosis.Core.Features.GcpDot.Interfaces;
+using Apotheosis.Core.Features.Logging.Interfaces;
 using Apotheosis.Core.Utils;
+using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 using SixLabors.ImageSharp.Formats.Png;
 
@@ -8,6 +10,7 @@ namespace Apotheosis.Core.Features.GcpDot.Modules;
 
 public sealed class GcpDotModule(
     IGcpDotService gcpDotService,
+    ILogService<GcpDotModule> logger,
     IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
     readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
@@ -23,6 +26,8 @@ public sealed class GcpDotModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /dot");
 
         var (centerColor, edgeColor) = await gcpDotService.GetGcpDotAsync();
 

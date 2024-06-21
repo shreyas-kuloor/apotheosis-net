@@ -4,6 +4,8 @@ using Apotheosis.Core.Features.AiChat.Interfaces;
 using Apotheosis.Core.Features.AiChat.Models;
 using Apotheosis.Core.Features.DateTime.Interfaces;
 using Apotheosis.Core.Features.FeatureFlags.Configuration;
+using Apotheosis.Core.Features.Logging.Interfaces;
+using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 using Color = NetCord.Color;
 
@@ -12,6 +14,7 @@ namespace Apotheosis.Core.Features.AiChat.Modules;
 public sealed class ChatModule(
     IAiChatService aiChatService,
     IAiThreadChannelRepository aiThreadChannelRepository,
+    ILogService<ChatModule> logger,
     IOptions<AiChatSettings> aiChatOptions,
     IOptions<FeatureFlagSettings> featureFlagOptions,
     IDateTimeService dateTimeService)
@@ -31,6 +34,8 @@ public sealed class ChatModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /chat {prompt}");
 
         if (Context.Channel is GuildThread)
         {

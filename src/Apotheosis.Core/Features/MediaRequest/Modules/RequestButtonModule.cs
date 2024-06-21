@@ -1,4 +1,5 @@
-﻿using Apotheosis.Core.Features.MediaRequest.Interfaces;
+﻿using Apotheosis.Core.Features.Logging.Interfaces;
+using Apotheosis.Core.Features.MediaRequest.Interfaces;
 using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 using NetCord.Services.ComponentInteractions;
@@ -8,7 +9,7 @@ public sealed class RequestButtonModule(
     IActiveMediaSelectionCache activeMediaSelectionCache, 
     IMediaRequestMessageCache mediaRequestMessageCache,
     IMediaRequestService mediaRequestService,
-    ILogger<RequestButtonModule> logger) : ComponentInteractionModule<ButtonInteractionContext>
+    ILogService<RequestButtonModule> logger) : ComponentInteractionModule<ButtonInteractionContext>
 {
     [ComponentInteraction("req-movie-button")]
     public async Task RequestMovieAsync()
@@ -35,15 +36,16 @@ public sealed class RequestButtonModule(
         {
             await mediaRequestService.RequestMovie(movieToRequest.Title, movieToRequest.TmdbId);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            logger.LogError(e, "Exception message: {Error}", e.Message);
             await FollowupAsync(
                 new InteractionMessageProperties()
                 .WithContent("Something went wrong when requesting the movie.")
                 .WithFlags(MessageFlags.Ephemeral));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} requested {movieToRequest.Title} ({movieToRequest.Year})");
 
         await FollowupAsync(
             new InteractionMessageProperties()
@@ -84,6 +86,8 @@ public sealed class RequestButtonModule(
                 .WithFlags(MessageFlags.Ephemeral));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} requested {seriesToRequest.Title} ({seriesToRequest.Year})");
 
         await FollowupAsync(
             new InteractionMessageProperties()

@@ -1,6 +1,9 @@
 ﻿using Apotheosis.Core.Features.Audio.Interfaces;
 using Apotheosis.Core.Features.FeatureFlags.Configuration;
+using Apotheosis.Core.Features.Logging.Interfaces;
 using Apotheosis.Core.Features.TextToSpeech.Interfaces;
+using Microsoft.Extensions.Logging;
+using NetCord;
 using NetCord.Gateway.Voice;
 using NetCord.Rest;
 
@@ -8,6 +11,7 @@ namespace Apotheosis.Core.Features.TextToSpeech.Modules;
 
 public sealed class SpeakModule(
     IAudioStreamService audioStreamService,
+    ILogService<SpeakModule> logger,
     ITextToSpeechService textToSpeechService,
     IVoiceClientService voiceClientService,
     IOptions<FeatureFlagSettings> featureFlagOptions)
@@ -26,6 +30,8 @@ public sealed class SpeakModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /speak {voiceName} {prompt}");
 
         var voices = await textToSpeechService.GetVoicesAsync();
         var voiceId = voices.FirstOrDefault(v => v.VoiceName?.Equals(voiceName, StringComparison.OrdinalIgnoreCase) ?? false)?.VoiceId;
@@ -130,6 +136,8 @@ public sealed class SpeakModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /voices");
 
         var voices = await textToSpeechService.GetVoicesAsync();
 

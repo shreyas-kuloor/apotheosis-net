@@ -1,11 +1,14 @@
 ﻿using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Apotheosis.Core.Features.ImageGen.Interfaces;
+using Apotheosis.Core.Features.Logging.Interfaces;
+using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 
 namespace Apotheosis.Core.Features.ImageGen.Modules;
 
 public sealed class ImageModule(
     IImageGenService imageGenService,
+    ILogService<ImageModule> logger,
     IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
     readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
@@ -21,6 +24,8 @@ public sealed class ImageModule(
                 .WithFlags(MessageFlags.Ephemeral)));
             return;
         }
+
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /image {prompt} {samplingSteps}");
 
         await RespondAsync(InteractionCallback.DeferredMessage());
         var imageBase64 = await imageGenService.GenerateImageBase64FromPromptAsync(prompt, samplingSteps);
