@@ -102,8 +102,8 @@ public sealed class MediaRequestService(
 
     public async Task RequestSeries(string title, int tvdbId)
     {
-        var rootFolders = await radarrClient.GetRootFoldersAsync();
-        var qualityProfiles = await radarrClient.GetQualityProfilesAsync();
+        var rootFolders = await sonarrClient.GetRootFoldersAsync();
+        var qualityProfiles = await sonarrClient.GetQualityProfilesAsync();
 
         var request = new SeriesRequest
         {
