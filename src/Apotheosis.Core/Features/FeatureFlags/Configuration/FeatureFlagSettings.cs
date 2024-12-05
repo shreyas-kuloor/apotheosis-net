@@ -9,6 +9,8 @@ public sealed class FeatureFlagSettings
 
     public bool GcpDotEnabled { get; set; }
 
+    public bool RankEnabled { get; set; }
+
     public bool ImageGenEnabled { get; set; }
 
     public bool JoinEnabled { get; set; }

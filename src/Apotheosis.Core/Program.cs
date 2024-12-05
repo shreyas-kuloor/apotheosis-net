@@ -1,4 +1,5 @@
 ﻿using Apotheosis.Core.Features.MediaRequest.Extensions;
+using Apotheosis.Core.Features.Rank.Extensions;
 using NetCord.Hosting.Services.ComponentInteractions;
 using NetCord.Services.ComponentInteractions;
 
@@ -29,6 +30,7 @@ builder.ConfigureServices(services =>
     services.AddAiChatServices(configuration);
     services.AddConverseServices(configuration);
     services.AddMediaRequestServices(configuration);
+    services.AddRankServices(configuration);
     services.AddFeatureFlagServices(configuration);
     services.AddGatewayEventHandlers(typeof(Program).Assembly);
     services.AddServicesWithAttributes(typeof(Program).Assembly);
