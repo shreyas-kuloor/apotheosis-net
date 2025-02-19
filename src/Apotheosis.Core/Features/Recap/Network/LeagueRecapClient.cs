@@ -18,7 +18,7 @@ public class LeagueRecapClient : ILeagueRecapClient
     /// <summary>
     /// Gets the number of seconds to wait until a timeout from the League Stats API service (in seconds).
     /// </summary>
-    public const int Timeout = 10;
+    public const int Timeout = 120;
 
     public LeagueRecapClient(HttpClient httpClient, IOptions<LeagueRecapSettings> leagueRecapOptions, ILogger<LeagueRecapClient> logger)
     {
