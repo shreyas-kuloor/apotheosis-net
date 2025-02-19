@@ -1,11 +1,9 @@
-﻿using Apotheosis.Core.Features.Rank.Exceptions;
-using Apotheosis.Core.Features.Rank.Configuration;
-using Apotheosis.Core.Features.Rank.Interfaces;
-using Apotheosis.Core.Features.Rank.Models;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Apotheosis.Core.Features.Stats.Configuration;
+using Apotheosis.Core.Features.Stats.Interfaces;
+using Apotheosis.Core.Features.Stats.Exceptions;
 
-namespace Apotheosis.Core.Features.Rank.Network;
+namespace Apotheosis.Core.Features.Stats.Network;
 public class LeagueStatsClient : ILeagueStatsClient
 {
     readonly HttpClient _httpClient;
@@ -30,9 +28,9 @@ public class LeagueStatsClient : ILeagueStatsClient
         _httpClient.BaseAddress = _leagueStatsSettings.BaseUrl;
     }
 
-    public async Task<IEnumerable<SummonerStatsDto>> GetSummonerStatsAsync(string summonerName, string tag)
+    public async Task<string> GetSummonerStatsAsync(string summonerName, string tag)
     {
-        var response = await _httpClient.GetAsync($"/elo?name={summonerName}&tag={tag}");
+        var response = await _httpClient.GetAsync($"/stats?name={summonerName}&tag={tag}");
 
         var data = await response.Content.ReadAsStringAsync();
 
@@ -42,6 +40,6 @@ public class LeagueStatsClient : ILeagueStatsClient
             throw new LeagueStatsNetworkException("League stats API returned a non-successful status code", null);
         }
 
-        return JsonConvert.DeserializeObject<IEnumerable<SummonerStatsDto>>(data) ?? [];
+        return data;
     }
 }

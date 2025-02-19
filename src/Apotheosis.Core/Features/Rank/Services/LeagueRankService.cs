@@ -5,11 +5,11 @@ using Apotheosis.Core.Features.Rank.SmartEnums;
 namespace Apotheosis.Core.Features.Rank.Services;
 
 [Scoped]
-public sealed class LeagueStatsService(ILeagueStatsClient leagueStatsClient) : ILeagueStatsService
+public sealed class LeagueRankService(ILeagueRankClient leagueRankClient) : ILeagueRankService
 {
     public async Task<RankDetailsDto?> GetRankedSoloStatsAsync(string summonerName, string tag)
     {
-        var summonerStats = await leagueStatsClient.GetSummonerStatsAsync(summonerName, tag);
+        var summonerStats = await leagueRankClient.GetSummonerRankStatsAsync(summonerName, tag);
 
         var rankedSoloStats = summonerStats.Select(s => new RankDetailsDto
         {

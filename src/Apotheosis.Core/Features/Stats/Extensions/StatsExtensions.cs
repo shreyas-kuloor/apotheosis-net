@@ -1,36 +1,36 @@
 ﻿using Apotheosis.Core.Features.Logging.Interfaces;
-using Apotheosis.Core.Features.Rank.Configuration;
-using Apotheosis.Core.Features.Rank.Interfaces;
-using Apotheosis.Core.Features.Rank.Network;
+using Apotheosis.Core.Features.Stats.Configuration;
+using Apotheosis.Core.Features.Stats.Interfaces;
+using Apotheosis.Core.Features.Stats.Network;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Apotheosis.Core.Features.Rank.Extensions;
+namespace Apotheosis.Core.Features.Stats.Extensions;
 
-public static class RankExtensions
+public static class StatsExtensions
 {
     /// <summary>
-    /// Adds rank related services.
+    /// Adds stats related services.
     /// </summary>
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
     /// <param name="configuration">An instance of <see cref="IConfiguration"/>.</param>
-    public static void AddRankServices(
+    public static void AddStatsServices(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<LeagueRankSettings>(configuration.GetSection(LeagueRankSettings.Name));
+        services.Configure<LeagueStatsSettings>(configuration.GetSection(LeagueStatsSettings.Name));
 
-        services.AddHttpClient<ILeagueRankClient, LeagueRankClient>()
+        services.AddHttpClient<ILeagueStatsClient, LeagueStatsClient>()
             .AddPolicyHandler((handlerServices, _) => HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .RetryAsync(
-                    LeagueRankClient.Retries,
+                    LeagueStatsClient.Retries,
                     (result, _) =>
                     {
-                        var logger = handlerServices.GetService<ILogService<LeagueRankClient>>();
+                        var logger = handlerServices.GetService<ILogService<LeagueStatsClient>>();
                         logger?.LogError(result.Exception, result.Result?.ToString());
                     }))
-            .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(LeagueRankClient.Timeout));
+            .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(LeagueStatsClient.Timeout));
     }
 }

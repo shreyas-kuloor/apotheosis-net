@@ -8,7 +8,7 @@ using NetCord.Rest;
 
 namespace Apotheosis.Core.Features.Rank.Modules;
 public sealed class RankModule(
-    ILeagueStatsService leagueStatsService,
+    ILeagueRankService leagueRankService,
     ILogService<RankModule> logger,
     IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
@@ -32,9 +32,9 @@ public sealed class RankModule(
         RankDetailsDto? rankSoloDuoDetails;
         try
         {
-            rankSoloDuoDetails = await leagueStatsService.GetRankedSoloStatsAsync(name, tag);
+            rankSoloDuoDetails = await leagueRankService.GetRankedSoloStatsAsync(name, tag);
         }
-        catch (LeagueStatsNetworkException)
+        catch (LeagueRankNetworkException)
         {
             await FollowupAsync(
                 new InteractionMessageProperties()

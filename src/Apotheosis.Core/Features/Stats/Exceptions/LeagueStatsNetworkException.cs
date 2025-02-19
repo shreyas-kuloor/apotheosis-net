@@ -1,4 +1,4 @@
-﻿namespace Apotheosis.Core.Features.Rank.Exceptions;
+﻿namespace Apotheosis.Core.Features.Stats.Exceptions;
 
 public sealed class LeagueStatsNetworkException : Exception
 {

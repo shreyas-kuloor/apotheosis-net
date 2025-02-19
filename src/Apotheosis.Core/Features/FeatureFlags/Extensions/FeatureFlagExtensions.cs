@@ -1,7 +1,7 @@
 ﻿using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Apotheosis.Core.Features.GcpDot.Extensions;
+namespace Apotheosis.Core.Features.FeatureFlags.Extensions;
 
 public static class FeatureFlagExtensions
 {

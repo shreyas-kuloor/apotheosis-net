@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr;
+namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
 
 public class Language
 {

@@ -1,5 +1,5 @@
 ﻿namespace Apotheosis.Core.Features.Rank.Models;
-public record SummonerStatsDto
+public record SummonerRankStatsDto
 {
     public string? LeagueId { get; set; }
 
