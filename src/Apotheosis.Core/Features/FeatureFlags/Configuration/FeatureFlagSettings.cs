@@ -11,7 +11,7 @@ public sealed class FeatureFlagSettings
 
     public bool RankEnabled { get; set; }
 
-    public bool StatsEnabled { get; set; }
+    public bool RecapEnabled { get; set; }
 
     public bool ImageGenEnabled { get; set; }
 

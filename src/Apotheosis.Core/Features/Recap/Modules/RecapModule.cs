@@ -1,22 +1,22 @@
 ﻿using Apotheosis.Core.Features.FeatureFlags.Configuration;
 using Apotheosis.Core.Features.Logging.Interfaces;
-using Apotheosis.Core.Features.Stats.Exceptions;
-using Apotheosis.Core.Features.Stats.Interfaces;
+using Apotheosis.Core.Features.Recap.Exceptions;
+using Apotheosis.Core.Features.Recap.Interfaces;
 using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 
-namespace Apotheosis.Core.Features.Stats.Modules;
-public sealed class StatsModule(
-    ILeagueStatsService leagueStatsService,
-    ILogService<StatsModule> logger,
+namespace Apotheosis.Core.Features.Recap.Modules;
+public sealed class RecapModule(
+    ILeagueRecapService leagueRecapService,
+    ILogService<RecapModule> logger,
     IOptions<FeatureFlagSettings> featureFlagOptions) : ApplicationCommandModule<SlashCommandContext>
 {
     readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
 
-    [SlashCommand("stats", "Get the League of Legends stats of the summoner with the specified name and tag")]
-    public async Task GetStatsAsync(string name, string tag)
+    [SlashCommand("recap", "Get the League of Legends recap of the summoner with the specified name and tag")]
+    public async Task GetRecapAsync(string name, string tag)
     {
-        if (!featureFlagSettings.StatsEnabled)
+        if (!featureFlagSettings.RecapEnabled)
         {
             await RespondAsync(InteractionCallback.Message(
                 new InteractionMessageProperties()
@@ -26,14 +26,14 @@ public sealed class StatsModule(
         }
 
         await RespondAsync(InteractionCallback.DeferredMessage());
-        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /stats {name} {tag}");
+        logger.Log(LogLevel.Information, null, $"{Context.User.GlobalName} used /recap {name} {tag}");
 
-        string stats;
+        string recap;
         try
         {
-            stats = await leagueStatsService.GetSummonerStatsAsync(name, tag);
+            recap = await leagueRecapService.GetSummonerRecapAsync(name, tag);
         }
-        catch (LeagueStatsNetworkException)
+        catch (LeagueRecapNetworkException)
         {
             await FollowupAsync(
                 new InteractionMessageProperties()
@@ -42,7 +42,7 @@ public sealed class StatsModule(
             return;
         }
 
-        if (string.IsNullOrEmpty(stats))
+        if (string.IsNullOrEmpty(recap))
         {
             await FollowupAsync(
                 new InteractionMessageProperties()
@@ -53,6 +53,6 @@ public sealed class StatsModule(
 
         await FollowupAsync(
             new InteractionMessageProperties()
-            .WithContent(stats));
+            .WithContent(recap));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Apotheosis.Core.Features.FeatureFlags.Extensions;
 using Apotheosis.Core.Features.MediaRequest.Extensions;
 using Apotheosis.Core.Features.Rank.Extensions;
-using Apotheosis.Core.Features.Stats.Extensions;
+using Apotheosis.Core.Features.Recap.Extensions;
 using NetCord.Hosting.Services.ComponentInteractions;
 using NetCord.Services.ComponentInteractions;
 
@@ -33,7 +33,7 @@ builder.ConfigureServices(services =>
     services.AddConverseServices(configuration);
     services.AddMediaRequestServices(configuration);
     services.AddRankServices(configuration);
-    services.AddStatsServices(configuration);
+    services.AddRecapServices(configuration);
     services.AddFeatureFlagServices(configuration);
     services.AddGatewayEventHandlers(typeof(Program).Assembly);
     services.AddServicesWithAttributes(typeof(Program).Assembly);

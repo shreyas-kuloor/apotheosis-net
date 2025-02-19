@@ -27,12 +27,12 @@ public class LeagueRankClient : ILeagueRankClient
         _httpClient = httpClient;
         _logger = logger;
         _leagueRankSettings = leagueRankOptions.Value;
-        _httpClient.BaseAddress = _leagueRankSettings.BaseUrl;
+        _httpClient.BaseAddress = _leagueRankSettings.Url;
     }
 
     public async Task<IEnumerable<SummonerRankStatsDto>> GetSummonerRankStatsAsync(string summonerName, string tag)
     {
-        var response = await _httpClient.GetAsync($"/elo?name={summonerName}&tag={tag}");
+        var response = await _httpClient.GetAsync($"?name={summonerName}&tag={tag}");
 
         var data = await response.Content.ReadAsStringAsync();
 
