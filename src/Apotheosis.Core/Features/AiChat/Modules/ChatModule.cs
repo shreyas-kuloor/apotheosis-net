@@ -16,7 +16,7 @@ public sealed class ChatModule(
     readonly FeatureFlagSettings _featureFlagSettings = featureFlagOptions.Value;
 
     [SlashCommand("chat", "Chat with the bot.")]
-    public async Task ChatAsync(string prompt, CancellationToken cancellationToken)
+    public async Task ChatAsync(string prompt)
     {
         if (!_featureFlagSettings.ChatEnabled)
         {
@@ -34,7 +34,7 @@ public sealed class ChatModule(
         string response;
         try
         {
-            response = await aiChatService.GetChatResponseAsync(prompt, cancellationToken);
+            response = await aiChatService.GetChatResponseAsync(prompt, CancellationToken.None);
         }
         catch (AiChatNetworkException)
         {
