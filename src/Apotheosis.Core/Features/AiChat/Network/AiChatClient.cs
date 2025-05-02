@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Mime;
+using System.Text;
 using Apotheosis.Core.Features.AiChat.Configuration;
 using Apotheosis.Core.Features.AiChat.Exceptions;
 using Apotheosis.Core.Features.AiChat.Interfaces;
@@ -23,7 +24,7 @@ public sealed class AiChatClient(HttpClient httpClient, IOptions<AiChatSettings>
     public async Task<string> GetChatResponseAsync(string prompt, CancellationToken cancellationToken)
     {
         using var requestMessage = new HttpRequestMessage(HttpMethod.Post, _aiChatSettings.Url);
-        var content = new StringContent(prompt, Encoding.UTF8);
+        var content = new StringContent(prompt, Encoding.UTF8, MediaTypeNames.Text.Plain);
         requestMessage.Content = content;
 
         using var response = await httpClient.SendAsync(requestMessage, cancellationToken);
