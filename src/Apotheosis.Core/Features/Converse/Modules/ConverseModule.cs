@@ -18,12 +18,12 @@ public sealed class ConverseModule(
     IOptions<FeatureFlagSettings> featureFlagOptions)
     : ApplicationCommandModule<SlashCommandContext>
 {
-    readonly FeatureFlagSettings featureFlagSettings = featureFlagOptions.Value;
+    readonly FeatureFlagSettings _featureFlagSettings = featureFlagOptions.Value;
 
     [SlashCommand("converse", "Invite the bot to respond to a prompt using a voice of your choice.")]
-    public async Task ConverseAsync([SlashCommandParameter(Name = "voice_name")] string voiceName, string prompt)
+    public async Task ConverseAsync([SlashCommandParameter(Name = "voice_name")] string voiceName, string prompt, CancellationToken cancellationToken)
     {
-        if (!featureFlagSettings.ConverseEnabled)
+        if (!_featureFlagSettings.ConverseEnabled)
         {
             await RespondAsync(InteractionCallback.Message(
                 new InteractionMessageProperties()
@@ -51,7 +51,7 @@ public sealed class ConverseModule(
         var client = Context.Client;
         var guild = Context.Guild!;
 
-        var voiceStream = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId);
+        var voiceStream = await converseService.GenerateConverseResponseFromPromptAsync(prompt, voiceName, voiceId, cancellationToken);
         if (!guild.VoiceStates.TryGetValue(Context.User.Id, out var userVoiceState))
         {
             await FollowupAsync(new InteractionMessageProperties
@@ -89,7 +89,8 @@ public sealed class ConverseModule(
         {
             voiceClient = await client.JoinVoiceChannelAsync(
                 guild.Id,
-                voiceChannelId);
+                voiceChannelId,
+                cancellationToken: cancellationToken);
 
             voiceClientService.StoreVoiceClient(voiceChannelId, voiceClient);
 
@@ -112,10 +113,10 @@ public sealed class ConverseModule(
         await using var output = ffmpeg.StandardOutput.BaseStream;
         await using var opusStream = new OpusEncodeStream(outStream, PcmFormat.Short, VoiceChannels.Stereo, OpusApplication.Audio);
 
-        await voiceStream.CopyToAsync(input);
+        await voiceStream.CopyToAsync(input, cancellationToken);
         ffmpeg.StandardInput.Close();
-        await output.CopyToAsync(opusStream);
-        await opusStream.FlushAsync();
+        await output.CopyToAsync(opusStream, cancellationToken);
+        await opusStream.FlushAsync(cancellationToken);
 
         if (voiceClientService.TryRemoveVoiceClient(botVoiceState!.ChannelId.GetValueOrDefault(), out var removedVoiceClient))
         {

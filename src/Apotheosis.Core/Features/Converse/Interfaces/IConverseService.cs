@@ -2,5 +2,5 @@
 
 public interface IConverseService
 {
-    Task<Stream> GenerateConverseResponseFromPromptAsync(string prompt, string voiceName, string voiceId);
+    Task<Stream> GenerateConverseResponseFromPromptAsync(string prompt, string voiceName, string voiceId, CancellationToken cancellationToken);
 }

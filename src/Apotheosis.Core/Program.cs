@@ -30,7 +30,6 @@ builder.ConfigureServices(services =>
     services.AddTextToSpeechServices(configuration);
     services.AddImageGenServices(configuration);
     services.AddAiChatServices(configuration);
-    services.AddConverseServices(configuration);
     services.AddMediaRequestServices(configuration);
     services.AddRankServices(configuration);
     services.AddRecapServices(configuration);

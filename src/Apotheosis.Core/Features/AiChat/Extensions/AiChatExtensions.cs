@@ -20,7 +20,7 @@ public static class AiChatExtensions
         IConfiguration configuration)
     {
         services.Configure<AiChatSettings>(configuration.GetSection(AiChatSettings.Name));
-        AddHttpClient<IAiChatNetworkDriver, OpenAiNetworkDriver>(services);
+        AddHttpClient<IAiChatClient, AiChatClient>(services);
     }
 
     private static void AddHttpClient<TClient, TImplementation>(
@@ -32,12 +32,12 @@ public static class AiChatExtensions
             .AddPolicyHandler((handlerServices, _) => HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .RetryAsync(
-                    OpenAiNetworkDriver.Retries,
+                    AiChatClient.Retries,
                     (result, _) =>
                     {
-                        var logger = handlerServices.GetService<ILogService<OpenAiNetworkDriver>>();
+                        var logger = handlerServices.GetService<ILogService<AiChatClient>>();
                         logger?.LogError(result.Exception, result.Result?.ToString());
                     }))
-            .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(OpenAiNetworkDriver.Timeout));
+            .AddPolicyHandler(_ => Policy.TimeoutAsync<HttpResponseMessage>(AiChatClient.Timeout));
     }
 }

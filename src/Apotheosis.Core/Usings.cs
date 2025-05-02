@@ -10,7 +10,6 @@ global using NetCord.Hosting.Services.ApplicationCommands;
 global using NetCord.Hosting.Services;
 global using NetCord.Gateway;
 global using Apotheosis.Core.Features.AiChat.Extensions;
-global using Apotheosis.Core.Features.Converse.Extensions;
 global using Apotheosis.Core.Features.GcpDot.Extensions;
 global using Apotheosis.Core.Features.ImageGen.Extensions;
 global using Apotheosis.Core.Features.Logging.Extensions;

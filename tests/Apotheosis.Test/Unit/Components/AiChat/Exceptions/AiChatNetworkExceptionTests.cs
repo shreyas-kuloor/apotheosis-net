@@ -30,12 +30,10 @@ public sealed class AiChatNetworkExceptionTests
     public void ConstructorWithMessageAndReasonAndInnerException_CreatesNewAiChatNetworkException()
     {
         const string message = "AI Chat Network Exception";
-        const AiChatNetworkException.ErrorReason reason = AiChatNetworkException.ErrorReason.Unknown;
         var innerException = new Exception();
-        var exception = new AiChatNetworkException(message, reason, innerException);
+        var exception = new AiChatNetworkException(message, innerException);
 
         exception.Message.Should().BeEquivalentTo(message);
         exception.InnerException.Should().BeEquivalentTo(innerException);
-        exception.Reason.Should().Be(AiChatNetworkException.ErrorReason.Unknown);
     }
 }
