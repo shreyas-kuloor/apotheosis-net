@@ -5,9 +5,10 @@ using Apotheosis.Core.Features.AiChat.Interfaces;
 
 namespace Apotheosis.Core.Features.AiChat.Network;
 
-public sealed class AiChatClient : IAiChatClient
+public sealed class AiChatClient(HttpClient httpClient, IOptions<AiChatSettings> aiChatOptions)
+    : IAiChatClient
 {
-    private readonly HttpClient _httpClient;
+    readonly AiChatSettings _aiChatSettings = aiChatOptions.Value;
 
     /// <summary>
     /// Gets the number of times to retry requests to AI Chat service.
@@ -19,20 +20,13 @@ public sealed class AiChatClient : IAiChatClient
     /// </summary>
     public const int Timeout = 10;
 
-    public AiChatClient(HttpClient httpClient, IOptions<AiChatSettings> aiChatOptions)
-    {
-        _httpClient = httpClient;
-        var aiChatSettings = aiChatOptions.Value;
-        _httpClient.BaseAddress = aiChatSettings.BaseUrl;
-    }
-
     public async Task<string> GetChatResponseAsync(string prompt, CancellationToken cancellationToken)
     {
-        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/httpbot");
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, _aiChatSettings.Url);
         var content = new StringContent(prompt, Encoding.UTF8);
         requestMessage.Content = content;
 
-        using var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        using var response = await httpClient.SendAsync(requestMessage, cancellationToken);
 
         var data = await response.Content.ReadAsStringAsync(cancellationToken);
 

@@ -7,5 +7,5 @@ public sealed class AiChatSettings
     /// <summary>
     /// Gets or sets the AI Chat Base URL.
     /// </summary>
-    public Uri? BaseUrl { get; set; }
+    public Uri? Url { get; set; }
 }
