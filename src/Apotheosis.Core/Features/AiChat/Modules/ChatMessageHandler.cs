@@ -22,7 +22,7 @@ public sealed class ChatMessageHandler(
         {
             logger.Log(LogLevel.Information, null, $"{message.Author.GlobalName} used @bot {message.Content}");
 
-            var reply = await message.ReplyAsync(new ReplyMessageProperties { Flags = MessageFlags.Loading });
+            var reply = await message.ReplyAsync(new ReplyMessageProperties { Content = "Thinking..." });
             
             string response;
             try
@@ -35,7 +35,6 @@ public sealed class ChatMessageHandler(
                 {
                     existingMsg.Content =
                         "Sorry, an error occurred while trying to reach the AI service. Please try again later or contact an admin.";
-                    existingMsg.Flags = null;
                 });
                 return;
             }
@@ -46,7 +45,6 @@ public sealed class ChatMessageHandler(
                 {
                     existingMsg.Content =
                         "Sorry, an error occurred while trying to reach the AI service. Please try again later or contact an admin.";
-                    existingMsg.Flags = null;
                 });
                 return;
             }
@@ -54,7 +52,6 @@ public sealed class ChatMessageHandler(
             await reply.ModifyAsync(existingMsg =>
             {
                 existingMsg.Content = response;
-                existingMsg.Flags = null;
             });
         }
     }
