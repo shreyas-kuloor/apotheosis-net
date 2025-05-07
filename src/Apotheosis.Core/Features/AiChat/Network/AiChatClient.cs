@@ -19,7 +19,7 @@ public sealed class AiChatClient(HttpClient httpClient, IOptions<AiChatSettings>
     /// <summary>
     /// Gets the number of seconds to wait until a timeout from the AI Chat service (in seconds).
     /// </summary>
-    public const int Timeout = 10;
+    public const int Timeout = 120;
 
     public async Task<string> GetChatResponseAsync(string prompt, CancellationToken cancellationToken)
     {
