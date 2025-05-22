@@ -4,7 +4,7 @@ public sealed class MovieDto
 {
     public int TmdbId { get; set; }
 
-    public string Title { get; set; } = default!;
+    public string? Title { get; set; }
 
     public string? RemotePoster { get; set; }
 

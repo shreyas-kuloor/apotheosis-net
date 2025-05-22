@@ -1,6 +1,3 @@
-using Apotheosis.Core.Features.AiChat.Exceptions;
-using FluentAssertions;
-
 namespace Apotheosis.Test.Unit.Components.AiChat.Exceptions;
 
 public sealed class AiChatNetworkExceptionTests

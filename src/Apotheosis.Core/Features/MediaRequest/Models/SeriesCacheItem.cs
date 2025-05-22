@@ -1,5 +1,5 @@
 ﻿namespace Apotheosis.Core.Features.MediaRequest.Models;
-internal class SeriesCacheItem
+public class SeriesCacheItem
 {
     public SeriesDto Item { get; set; } = default!;
 

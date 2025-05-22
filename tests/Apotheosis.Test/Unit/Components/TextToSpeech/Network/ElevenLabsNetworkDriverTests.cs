@@ -1,26 +1,14 @@
-﻿using System.Net;
-using System.Net.Mime;
-using System.Text;
-using Apotheosis.Core.Features.TextToSpeech.Configuration;
-using Apotheosis.Core.Features.TextToSpeech.Exceptions;
-using Apotheosis.Core.Features.TextToSpeech.Network;
-using Apotheosis.Test.Utils;
-using FluentAssertions;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json;
-
-namespace Apotheosis.Test.Unit.Components.TextToSpeech.Network;
+﻿namespace Apotheosis.Test.Unit.Components.TextToSpeech.Network;
 
 public sealed class ElevenLabsNetworkDriverTests
 {
-    private const string RequestString = "request123";
-    private const string ResponseString = "response123";
+    const string RequestString = "request123";
+    const string ResponseString = "response123";
 
-    private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly ElevenLabsNetworkDriver _elevenLabsNetworkDriver;
+    readonly Mock<HttpMessageHandler> _mockHandler;
+    readonly ElevenLabsNetworkDriver _elevenLabsNetworkDriver;
 
-    private readonly TextToSpeechSettings _textToSpeechSettings = new()
+    readonly TextToSpeechSettings _textToSpeechSettings = new()
     {
         ElevenLabsBaseUrl = new Uri("https://example.com/"),
         ElevenLabsApiKey = "api-key"
@@ -341,13 +329,13 @@ public sealed class ElevenLabsNetworkDriverTests
             ItExpr.IsAny<CancellationToken>());
     }
 
-    private class TestRequest
+    class TestRequest
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string? RequestContent { get; set; }
     }
 
-    private class TestResponse
+    class TestResponse
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string? ResponseContent { get; set; }

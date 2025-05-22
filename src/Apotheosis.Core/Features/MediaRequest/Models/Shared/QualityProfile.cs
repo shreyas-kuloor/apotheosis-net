@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.MediaRequest.Models.Shared;
+﻿namespace Apotheosis.Core.Features.MediaRequest.Models.Shared;
 public class QualityProfile
 {
     [JsonProperty("name")]

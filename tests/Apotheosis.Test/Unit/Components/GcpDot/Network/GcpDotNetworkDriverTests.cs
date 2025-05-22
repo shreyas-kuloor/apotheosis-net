@@ -1,27 +1,15 @@
-﻿using System.Net;
-using System.Net.Mime;
-using System.Text;
-using Apotheosis.Core.Features.GcpDot.Configuration;
-using Apotheosis.Core.Features.GcpDot.Exceptions;
-using Apotheosis.Core.Features.GcpDot.Network;
-using Apotheosis.Test.Utils;
-using FluentAssertions;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json;
-
-namespace Apotheosis.Test.Unit.Components.GcpDot.Network;
+﻿namespace Apotheosis.Test.Unit.Components.GcpDot.Network;
 
 public sealed class GcpDotNetworkDriverTests
 {
-    private const string RequestString = "request123";
-    private const string ResponseString = "response123";
+    const string RequestString = "request123";
+    const string ResponseString = "response123";
 
 
-    private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly GcpDotNetworkDriver _gcpDotNetworkDriver;
+    readonly Mock<HttpMessageHandler> _mockHandler;
+    readonly GcpDotNetworkDriver _gcpDotNetworkDriver;
 
-    private readonly GcpDotSettings _gcpDotSettings = new()
+    readonly GcpDotSettings _gcpDotSettings = new()
     {
         BaseUrl = new Uri("https://example.com/"),
     };
@@ -151,7 +139,7 @@ public sealed class GcpDotNetworkDriverTests
             ItExpr.IsAny<CancellationToken>());
     }
 
-    private class TestRequest
+    class TestRequest
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string? RequestContent { get; set; }

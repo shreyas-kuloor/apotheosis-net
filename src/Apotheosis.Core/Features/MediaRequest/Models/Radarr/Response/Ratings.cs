@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
+﻿namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
 
 public class Ratings
 {

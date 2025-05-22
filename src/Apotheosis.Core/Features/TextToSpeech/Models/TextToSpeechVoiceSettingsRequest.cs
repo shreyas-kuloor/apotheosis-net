@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.TextToSpeech.Models;
+﻿namespace Apotheosis.Core.Features.TextToSpeech.Models;
 
 public sealed class TextToSpeechVoiceSettingsRequest
 {

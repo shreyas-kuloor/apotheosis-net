@@ -1,18 +1,14 @@
-﻿using Apotheosis.Core.Features.TextToSpeech.Configuration;
-using Apotheosis.Core.Features.TextToSpeech.Interfaces;
+﻿using Apotheosis.Core.Features.TextToSpeech.Interfaces;
 using Apotheosis.Core.Features.TextToSpeech.Models;
-using Apotheosis.Core.Features.TextToSpeech.Services;
-using FluentAssertions;
-using Moq;
 
 namespace Apotheosis.Test.Unit.Components.TextToSpeech.Services;
 
 public sealed class TextToSpeechServiceTests : IDisposable
 {
-    private readonly Mock<ITextToSpeechNetworkDriver> _textToSpeechNetworkDriverMock;
-    private readonly TextToSpeechService _textToSpeechService;
+    readonly Mock<ITextToSpeechNetworkDriver> _textToSpeechNetworkDriverMock;
+    readonly TextToSpeechService _textToSpeechService;
 
-    private readonly TextToSpeechSettings _textToSpeechSettings = new()
+    readonly TextToSpeechSettings _textToSpeechSettings = new()
     {
         ElevenLabsModelId = "test-model",
         ElevenLabsStability = 0.1,

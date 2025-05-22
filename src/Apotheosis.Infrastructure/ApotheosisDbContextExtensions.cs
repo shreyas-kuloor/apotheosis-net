@@ -10,6 +10,7 @@ public static class ApotheosisDbContextExtensions
     /// Adds infrastructure related services.
     /// </summary>
     /// <param name="services"> The instances of <see cref="IServiceCollection"/>.</param>
+    /// <param name="connectionString"> The connection string of the database.</param>
     public static void AddApotheosisDbContext(this IServiceCollection services, string? connectionString)
     {   
         services.AddDbContext<ApotheosisDbContext>(options => 

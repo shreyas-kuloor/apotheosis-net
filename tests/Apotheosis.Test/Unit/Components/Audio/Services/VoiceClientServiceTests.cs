@@ -1,13 +1,8 @@
-﻿using Apotheosis.Core.Features.Audio.Exceptions;
-using Apotheosis.Core.Features.Audio.Services;
-using FluentAssertions;
-using NetCord.Gateway.Voice;
-
-namespace Apotheosis.Test.Unit.Components.Audio.Services;
+﻿namespace Apotheosis.Test.Unit.Components.Audio.Services;
 
 public sealed class VoiceClientServiceTests
 {
-    private readonly VoiceClientService _voiceClientService = new();
+    readonly VoiceClientService _voiceClientService = new();
 
     [Fact]
     public void StoreVoiceClient_DoesNotThrowException_GivenSuccessfulAdd()

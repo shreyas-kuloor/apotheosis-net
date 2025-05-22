@@ -9,11 +9,11 @@ public class ApotheosisDbContextFactory : IDesignTimeDbContextFactory<Apotheosis
     ApotheosisDbContext IDesignTimeDbContextFactory<ApotheosisDbContext>.CreateDbContext(string[] args) =>
         BuildApotheosisDbContext();
 
-    private static ApotheosisDbContext BuildApotheosisDbContext()
+    static ApotheosisDbContext BuildApotheosisDbContext()
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApotheosisDbContext>();
 
-        IConfigurationRoot configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../"))
             .AddJsonFile("appsettings.json", optional: false)
             .Build();

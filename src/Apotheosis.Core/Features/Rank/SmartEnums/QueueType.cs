@@ -1,5 +1,4 @@
 ﻿using Ardalis.SmartEnum;
-using Newtonsoft.Json;
 
 namespace Apotheosis.Core.Features.Rank.SmartEnums;
 public sealed class QueueType : SmartEnum<QueueType, string>

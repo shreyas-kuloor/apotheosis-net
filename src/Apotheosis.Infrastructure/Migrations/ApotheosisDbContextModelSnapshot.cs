@@ -16,12 +16,12 @@ namespace Apotheosis.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Apotheosis.Infrastructure.Entities.EmojiUsage", b =>
+            modelBuilder.Entity("Apotheosis.Core.Features.EmojiCounter.Aggregates.EmojiUsage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,6 +47,55 @@ namespace Apotheosis.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("EmojiUsages");
+                });
+
+            modelBuilder.Entity("Apotheosis.Core.Features.ReactionForwarding.Aggregates.ForwardedMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ChannelId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<decimal>("MessageId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId", "ChannelId")
+                        .IsUnique();
+
+                    b.ToTable("ForwardedMessages");
+                });
+
+            modelBuilder.Entity("Apotheosis.Core.Features.ReactionForwarding.Aggregates.ReactionForwardingRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ChannelId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<decimal?>("EmojiId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmojiId", "Name");
+
+                    b.HasIndex("EmojiId", "Name", "ChannelId")
+                        .IsUnique();
+
+                    b.ToTable("ReactionForwardingRules");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,4 @@
-﻿using Apotheosis.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace Apotheosis.Test.Utils;
+﻿namespace Apotheosis.Test.Utils;
 
 public static class InMemoryDbContextBuilder
 {

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Response;
+﻿namespace Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Response;
 
 public class Statistics
 {

@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build-env
 WORKDIR /src
 
 # Accept a build argument for configuration, defaulting to Release
@@ -9,15 +9,15 @@ COPY . ./
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release
-RUN dotnet publish src/Apotheosis.Core/Apotheosis.Core.csproj -c $BUILD_CONFIGURATION -o /out/Apotheosis.Core
+RUN dotnet publish src/Apotheosis.Server/Apotheosis.Server.csproj -c $BUILD_CONFIGURATION -o /out/Apotheosis.Server
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
-COPY --from=build-env /out/Apotheosis.Core .
+COPY --from=build-env /out/Apotheosis.Server .
 
 RUN apt-get update
 RUN apt-get -y install libsodium-dev libopus0 libopus-dev opus-tools
 RUN apt-get -y install ffmpeg
 
-ENTRYPOINT ["dotnet", "Apotheosis.Core.dll"]
+ENTRYPOINT ["dotnet", "Apotheosis.Server.dll"]

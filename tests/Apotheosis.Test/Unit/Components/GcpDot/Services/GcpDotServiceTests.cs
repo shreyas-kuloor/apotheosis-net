@@ -1,15 +1,11 @@
 ﻿using Apotheosis.Core.Features.GcpDot.Interfaces;
-using Apotheosis.Core.Features.GcpDot.Services;
-using FluentAssertions;
-using Moq;
-using SixLabors.ImageSharp;
 
 namespace Apotheosis.Test.Unit.Components.GcpDot.Services;
 
 public sealed class GcpDotServiceTests : IDisposable
 {
-    private readonly Mock<IGcpDotNetworkDriver> _gcpDotNetworkDriverMock;
-    private readonly GcpDotService _gcpDotService;
+    readonly Mock<IGcpDotNetworkDriver> _gcpDotNetworkDriverMock;
+    readonly GcpDotService _gcpDotService;
 
     public static readonly TheoryData<string, string, string> TestData = new()
     {

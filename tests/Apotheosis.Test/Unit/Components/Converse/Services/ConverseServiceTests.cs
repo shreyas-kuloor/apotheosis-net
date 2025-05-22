@@ -1,23 +1,17 @@
 ﻿using Apotheosis.Core.Features.AiChat.Interfaces;
-using Apotheosis.Core.Features.Converse.Services;
-using Apotheosis.Core.Features.Logging.Interfaces;
 using Apotheosis.Core.Features.TextToSpeech.Interfaces;
-using FluentAssertions;
-using Moq;
 
 namespace Apotheosis.Test.Unit.Components.Converse.Services;
 
 public sealed class ConverseServiceTests : IDisposable
 {
-    private readonly Mock<IAiChatService> _aiChatServiceMock = new(MockBehavior.Strict);
-    private readonly Mock<ITextToSpeechService> _textToSpeechServiceMock = new(MockBehavior.Strict);
-    private readonly Mock<ILogService<ConverseService>> _loggerMock = new(MockBehavior.Strict);
+    readonly Mock<IAiChatService> _aiChatServiceMock = new(MockBehavior.Strict);
+    readonly Mock<ITextToSpeechService> _textToSpeechServiceMock = new(MockBehavior.Strict);
 
     public void Dispose()
     {
         _aiChatServiceMock.VerifyAll();
         _textToSpeechServiceMock.VerifyAll();
-        _loggerMock.VerifyAll();
     }
 
     [Fact]

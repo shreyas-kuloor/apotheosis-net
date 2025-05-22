@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
+﻿namespace Apotheosis.Core.Features.MediaRequest.Models.Radarr.Response;
 
 public class Movie
 {
     [JsonProperty("title")]
-    public string Title { get; set; } = default!;
+    public string? Title { get; set; }
 
     [JsonProperty("originalLanguage")]
     public Language? OriginalLanguage { get; set; }

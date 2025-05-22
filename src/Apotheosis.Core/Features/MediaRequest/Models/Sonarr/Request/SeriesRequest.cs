@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Request;
+﻿namespace Apotheosis.Core.Features.MediaRequest.Models.Sonarr.Request;
 public sealed class SeriesRequest
 {
     [JsonProperty("title")]
